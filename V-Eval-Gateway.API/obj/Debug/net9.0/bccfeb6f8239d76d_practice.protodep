@@ -1,2 +1,0 @@
-obj\Debug\net9.0/Practice.cs \
-obj\Debug\net9.0/PracticeGrpc.cs: ../../../grpc/practice.proto
