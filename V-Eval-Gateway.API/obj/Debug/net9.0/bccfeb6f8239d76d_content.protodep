@@ -1,0 +1,2 @@
+obj\Debug\net9.0/Content.cs \
+obj\Debug\net9.0/ContentGrpc.cs: ../../../grpc/content.proto

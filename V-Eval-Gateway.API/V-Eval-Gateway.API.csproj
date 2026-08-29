@@ -9,6 +9,14 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.17" />
+    <PackageReference Include="Grpc.AspNetCore" Version="2.67.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Protobuf Include="../../../grpc/ai.proto" GrpcServices="Client" Link="Protos/ai.proto" />
+    <Protobuf Include="../../../grpc/auth.proto" GrpcServices="Client" Link="Protos/auth.proto" />
+    <Protobuf Include="../../../grpc/content.proto" GrpcServices="Client" Link="Protos/content.proto" />
+    <Protobuf Include="../../../grpc/practice.proto" GrpcServices="Client" Link="Protos/practice.proto" />
   </ItemGroup>
 
   <ItemGroup>

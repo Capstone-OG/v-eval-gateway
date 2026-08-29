@@ -37,3 +37,10 @@ e:\CapStone\All Services\V-Eval-Gateway\V-Eval-Gateway.API\obj\Debug\net9.0\refi
 e:\CapStone\All Services\V-Eval-Gateway\V-Eval-Gateway.API\obj\Debug\net9.0\V-Eval-Gateway.API.pdb
 e:\CapStone\All Services\V-Eval-Gateway\V-Eval-Gateway.API\obj\Debug\net9.0\V-Eval-Gateway.API.genruntimeconfig.cache
 e:\CapStone\All Services\V-Eval-Gateway\V-Eval-Gateway.API\obj\Debug\net9.0\ref\V-Eval-Gateway.API.dll
+E:\CapStone\All Services\V-Eval-Gateway\V-Eval-Gateway.API\bin\Debug\net9.0\Google.Protobuf.dll
+E:\CapStone\All Services\V-Eval-Gateway\V-Eval-Gateway.API\bin\Debug\net9.0\Grpc.AspNetCore.Server.dll
+E:\CapStone\All Services\V-Eval-Gateway\V-Eval-Gateway.API\bin\Debug\net9.0\Grpc.AspNetCore.Server.ClientFactory.dll
+E:\CapStone\All Services\V-Eval-Gateway\V-Eval-Gateway.API\bin\Debug\net9.0\Grpc.Core.Api.dll
+E:\CapStone\All Services\V-Eval-Gateway\V-Eval-Gateway.API\bin\Debug\net9.0\Grpc.Net.Client.dll
+E:\CapStone\All Services\V-Eval-Gateway\V-Eval-Gateway.API\bin\Debug\net9.0\Grpc.Net.ClientFactory.dll
+E:\CapStone\All Services\V-Eval-Gateway\V-Eval-Gateway.API\bin\Debug\net9.0\Grpc.Net.Common.dll

@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("V-Eval-Gateway.Domain")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+3fa8dc7ba318e9884d0dc12be696d34b2d9126e5")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+68b19964c4770a1069eaa73ee17e5969afb9ead6")]
 [assembly: System.Reflection.AssemblyProductAttribute("V-Eval-Gateway.Domain")]
 [assembly: System.Reflection.AssemblyTitleAttribute("V-Eval-Gateway.Domain")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
