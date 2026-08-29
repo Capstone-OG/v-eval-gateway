@@ -1,0 +1,16 @@
+e:\CapStone\All Services\V-Eval-Gateway\V-Eval-Gateway.Application\bin\Debug\net9.0\V-Eval-Gateway.Application.deps.json
+e:\CapStone\All Services\V-Eval-Gateway\V-Eval-Gateway.Application\bin\Debug\net9.0\V-Eval-Gateway.Application.dll
+e:\CapStone\All Services\V-Eval-Gateway\V-Eval-Gateway.Application\bin\Debug\net9.0\V-Eval-Gateway.Application.pdb
+e:\CapStone\All Services\V-Eval-Gateway\V-Eval-Gateway.Application\bin\Debug\net9.0\V-Eval-Gateway.Domain.dll
+e:\CapStone\All Services\V-Eval-Gateway\V-Eval-Gateway.Application\bin\Debug\net9.0\V-Eval-Gateway.Domain.pdb
+e:\CapStone\All Services\V-Eval-Gateway\V-Eval-Gateway.Application\obj\Debug\net9.0\V-Eval-Gateway.Application.csproj.AssemblyReference.cache
+e:\CapStone\All Services\V-Eval-Gateway\V-Eval-Gateway.Application\obj\Debug\net9.0\V-Eval-Gateway.Application.GeneratedMSBuildEditorConfig.editorconfig
+e:\CapStone\All Services\V-Eval-Gateway\V-Eval-Gateway.Application\obj\Debug\net9.0\V-Eval-Gateway.Application.AssemblyInfoInputs.cache
+e:\CapStone\All Services\V-Eval-Gateway\V-Eval-Gateway.Application\obj\Debug\net9.0\V-Eval-Gateway.Application.AssemblyInfo.cs
+e:\CapStone\All Services\V-Eval-Gateway\V-Eval-Gateway.Application\obj\Debug\net9.0\V-Eval-Gateway.Application.csproj.CoreCompileInputs.cache
+e:\CapStone\All Services\V-Eval-Gateway\V-Eval-Gateway.Application\obj\Debug\net9.0\V-Eval-Gateway.Application.sourcelink.json
+e:\CapStone\All Services\V-Eval-Gateway\V-Eval-Gateway.Application\obj\Debug\net9.0\V-Eval-G.7A4C977E.Up2Date
+e:\CapStone\All Services\V-Eval-Gateway\V-Eval-Gateway.Application\obj\Debug\net9.0\V-Eval-Gateway.Application.dll
+e:\CapStone\All Services\V-Eval-Gateway\V-Eval-Gateway.Application\obj\Debug\net9.0\refint\V-Eval-Gateway.Application.dll
+e:\CapStone\All Services\V-Eval-Gateway\V-Eval-Gateway.Application\obj\Debug\net9.0\V-Eval-Gateway.Application.pdb
+e:\CapStone\All Services\V-Eval-Gateway\V-Eval-Gateway.Application\obj\Debug\net9.0\ref\V-Eval-Gateway.Application.dll

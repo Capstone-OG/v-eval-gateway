@@ -33,6 +33,42 @@
             "related": ".pdb;.xml"
           }
         }
+      },
+      "V-Eval-Gateway.Application/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v9.0",
+        "dependencies": {
+          "V-Eval-Gateway.Domain": "1.0.0"
+        },
+        "compile": {
+          "bin/placeholder/V-Eval-Gateway.Application.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/V-Eval-Gateway.Application.dll": {}
+        }
+      },
+      "V-Eval-Gateway.Domain/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v9.0",
+        "compile": {
+          "bin/placeholder/V-Eval-Gateway.Domain.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/V-Eval-Gateway.Domain.dll": {}
+        }
+      },
+      "V-Eval-Gateway.Infrastructure/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v9.0",
+        "dependencies": {
+          "V-Eval-Gateway.Application": "1.0.0"
+        },
+        "compile": {
+          "bin/placeholder/V-Eval-Gateway.Infrastructure.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/V-Eval-Gateway.Infrastructure.dll": {}
+        }
       }
     }
   },
@@ -67,11 +103,28 @@
         "microsoft.openapi.1.6.17.nupkg.sha512",
         "microsoft.openapi.nuspec"
       ]
+    },
+    "V-Eval-Gateway.Application/1.0.0": {
+      "type": "project",
+      "path": "../V-Eval-Gateway.Application/V-Eval-Gateway.Application.csproj",
+      "msbuildProject": "../V-Eval-Gateway.Application/V-Eval-Gateway.Application.csproj"
+    },
+    "V-Eval-Gateway.Domain/1.0.0": {
+      "type": "project",
+      "path": "../V-Eval-Gateway.Domain/V-Eval-Gateway.Domain.csproj",
+      "msbuildProject": "../V-Eval-Gateway.Domain/V-Eval-Gateway.Domain.csproj"
+    },
+    "V-Eval-Gateway.Infrastructure/1.0.0": {
+      "type": "project",
+      "path": "../V-Eval-Gateway.Infrastructure/V-Eval-Gateway.Infrastructure.csproj",
+      "msbuildProject": "../V-Eval-Gateway.Infrastructure/V-Eval-Gateway.Infrastructure.csproj"
     }
   },
   "projectFileDependencyGroups": {
     "net9.0": [
-      "Microsoft.AspNetCore.OpenApi >= 9.0.17"
+      "Microsoft.AspNetCore.OpenApi >= 9.0.17",
+      "V-Eval-Gateway.Application >= 1.0.0",
+      "V-Eval-Gateway.Infrastructure >= 1.0.0"
     ]
   },
   "packageFolders": {
@@ -107,7 +160,14 @@
       "frameworks": {
         "net9.0": {
           "targetAlias": "net9.0",
-          "projectReferences": {}
+          "projectReferences": {
+            "e:\\CapStone\\All Services\\V-Eval-Gateway\\V-Eval-Gateway.Application\\V-Eval-Gateway.Application.csproj": {
+              "projectPath": "e:\\CapStone\\All Services\\V-Eval-Gateway\\V-Eval-Gateway.Application\\V-Eval-Gateway.Application.csproj"
+            },
+            "e:\\CapStone\\All Services\\V-Eval-Gateway\\V-Eval-Gateway.Infrastructure\\V-Eval-Gateway.Infrastructure.csproj": {
+              "projectPath": "e:\\CapStone\\All Services\\V-Eval-Gateway\\V-Eval-Gateway.Infrastructure\\V-Eval-Gateway.Infrastructure.csproj"
+            }
+          }
         }
       },
       "warningProperties": {
