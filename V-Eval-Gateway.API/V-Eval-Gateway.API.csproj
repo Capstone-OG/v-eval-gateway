@@ -20,9 +20,6 @@
     <Protobuf Include="../../../grpc/practice.proto" GrpcServices="Client" Link="Protos/practice.proto" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\V-Eval-Gateway.Infrastructure\V-Eval-Gateway.Infrastructure.csproj" />
-    <ProjectReference Include="..\V-Eval-Gateway.Application\V-Eval-Gateway.Application.csproj" />
-  </ItemGroup>
+
 
 </Project>

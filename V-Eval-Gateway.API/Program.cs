@@ -1,3 +1,5 @@
+using V_Eval_Gateway.API.Extensions;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // 1. Setup CORS Policy
@@ -21,27 +23,16 @@ builder.Services.AddHealthChecks();
 
 var app = builder.Build();
 
-// 4. Configure HTTP Request Pipeline
+// 4. Configure OpenAPI in Development
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
 }
 
-app.UseCors("AllowAll");
+// 5. Use Modular Gateway Middleware Pipeline
+app.UseGatewayMiddlewarePipeline();
 
-// Correlation ID Middleware for Distributed Tracing
-app.Use(async (context, next) =>
-{
-    const string correlationIdHeader = "X-Correlation-ID";
-    if (!context.Request.Headers.ContainsKey(correlationIdHeader))
-    {
-        context.Request.Headers[correlationIdHeader] = Guid.NewGuid().ToString();
-    }
-    context.Response.Headers[correlationIdHeader] = context.Request.Headers[correlationIdHeader];
-    await next();
-});
-
-// Gateway Health Check Endpoint
+// 6. Gateway Health Check Endpoint
 app.MapGet("/healthz", () => Results.Ok(new 
 { 
     Status = "Healthy", 
@@ -49,7 +40,7 @@ app.MapGet("/healthz", () => Results.Ok(new
     Timestamp = DateTime.UtcNow 
 })).WithName("GatewayHealthCheck");
 
-// Map YARP Reverse Proxy Routes
+// 7. Map YARP Reverse Proxy Routes
 app.MapReverseProxy();
 
 app.Run();
