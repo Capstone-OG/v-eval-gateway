@@ -19,6 +19,13 @@ public static class MiddlewarePipelineExtensions
         // 4. Global CORS policy
         app.UseCors("AllowAll");
 
+        // 5. Rate Limiting
+        app.UseRateLimiter();
+
+        // 6. Authentication & Authorization (if enabled)
+        app.UseAuthentication();
+        app.UseAuthorization();
+
         return app;
     }
 }
