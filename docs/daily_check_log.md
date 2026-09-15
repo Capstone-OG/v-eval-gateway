@@ -1,5 +1,15 @@
 # NHẬT KÝ KIỂM TRẢ TIẾN ĐỘ VẬN HÀNH (DAILY CHECK LOG) - V-EVAL GATEWAY
 
+## [15/09/2026] - Dockerize Gateway & Chuẩn Hóa Docker Compose Multi-Stage Build
+- **Dockerfile Multi-Stage .NET 9**:
+  - Khởi tạo `Dockerfile` cho Gateway (`V-Eval-Gateway.API`) trên cổng `5212`.
+- **Tích Hợp Docker Compose Orchestration (`docker-compose.yml`)**:
+  - Định tuyến các container qua mạng nội bộ bridge `veval_network`.
+  - Cấu hình script chạy tự động [`run_docker.bat`](file:///e:/CapStone/Scripts/run_docker/run_docker.bat).
+  - Kiểm thử cú pháp `docker compose config` đạt 100% thành công (Exit Code 0).
+
+---
+
 ## [14/09/2026] - Chuyển Đổi sang Kiến Trúc Modular Feature Folders, Thêm Response Token Warning & Bảo Mật Production
 - **Tái Cấu Trúc Kiến Trúc Solution**:
   - Gỡ bỏ hoàn toàn 3 dự án Clean Architecture rỗng (`Domain`, `Application`, `Infrastructure`).
@@ -27,9 +37,3 @@
 ## [11/09/2026] - Ma Trận Định Tuyến YARP Reverse Proxy & CORS Policy
 - **Cấu hình Routes & Clusters (`appsettings.json`)**: Định tuyến 4 microservice (`AI Engine`, `Content`, `Identity`, `Practice`).
 - **CORS Policy**: Bật chính sách `AllowAll` cho phép Frontend Web/Mobile truy cập xuyên suốt.
-
----
-
-## [10/09/2026] - Tích Hợp YARP & gRPC Contracts
-- **Tích hợp NuGet**: Thêm `Yarp.ReverseProxy` v2.3.0.
-- **Protobuf Links**: Liên kết các hợp đồng gRPC (`ai.proto`, `auth.proto`, `content.proto`, `practice.proto`).
