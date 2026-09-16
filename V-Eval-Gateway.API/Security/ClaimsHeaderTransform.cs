@@ -1,9 +1,11 @@
 using Yarp.ReverseProxy.Transforms;
+using Yarp.ReverseProxy.Transforms.Builder;
 
 namespace V_Eval_Gateway.API.Security;
 
 /// <summary>
 /// Transform for extracting authenticated user claims and injecting them into downstream HTTP headers.
+/// Downstream microservices can read X-User-Id, X-User-Role, X-Campus-Id directly without re-validating JWT.
 /// Also notifies Frontend via response headers when JWT Token is expiring soon based on Admin settings.
 /// </summary>
 public static class ClaimsHeaderTransform
@@ -11,6 +13,7 @@ public static class ClaimsHeaderTransform
     private const string HeaderUserId = "X-User-Id";
     private const string HeaderUserRole = "X-User-Role";
     private const string HeaderUserEmail = "X-User-Email";
+    private const string HeaderCampusId = "X-Campus-Id";
     private const string HeaderTokenExpiresAt = "X-Token-Expires-At";
     private const string HeaderTokenRemainingSeconds = "X-Token-Remaining-Seconds";
     private const string ResponseHeaderRefreshRequired = "X-Token-Refresh-Required";
@@ -27,15 +30,17 @@ public static class ClaimsHeaderTransform
             headers.Remove(HeaderUserId);
             headers.Remove(HeaderUserRole);
             headers.Remove(HeaderUserEmail);
+            headers.Remove(HeaderCampusId);
             headers.Remove(HeaderTokenExpiresAt);
             headers.Remove(HeaderTokenRemainingSeconds);
 
             if (user.Identity?.IsAuthenticated == true)
             {
-                // 1. Extract User Identity Claims
+                // 1. Extract User Identity Claims (Aligned with V-ACT V2 ERD Schema)
                 var userId = user.FindFirst("sub")?.Value ?? user.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
                 var userRole = user.FindFirst("role")?.Value ?? user.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value;
                 var userEmail = user.FindFirst("email")?.Value ?? user.FindFirst(System.Security.Claims.ClaimTypes.Email)?.Value;
+                var campusId = user.FindFirst("campus_id")?.Value;
 
                 if (!string.IsNullOrEmpty(userId))
                 {
@@ -50,6 +55,11 @@ public static class ClaimsHeaderTransform
                 if (!string.IsNullOrEmpty(userEmail))
                 {
                     headers.Add(HeaderUserEmail, userEmail);
+                }
+
+                if (!string.IsNullOrEmpty(campusId))
+                {
+                    headers.Add(HeaderCampusId, campusId);
                 }
 
                 // 2. Extract Token Expiration Claim ('exp' unix timestamp in seconds)
