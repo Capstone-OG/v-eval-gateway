@@ -17,6 +17,7 @@ public static class GatewayAuthExtensions
         var jwtAudience = configuration["JwtSettings:Audience"];
 
         // 2. Validate configuration at startup (Do NOT use hardcoded fallback secrets)
+        var refreshThresholdMinutes = configuration.GetValue<int>("JwtSettings:RefreshThresholdMinutes", 5);
         if (string.IsNullOrWhiteSpace(jwtSecret))
         {
             // Throw exception during startup if JWT secret is missing in environment

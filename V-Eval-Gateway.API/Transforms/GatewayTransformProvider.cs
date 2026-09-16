@@ -22,7 +22,7 @@ public class GatewayTransformProvider : ITransformProvider
 
     public void Apply(TransformBuilderContext context)
     {
-        // 1. Inject Authenticated Claims into Downstream Headers
+        // 1. Inject Authenticated Claims (UserId, UserRole, UserEmail, CampusId, TokenExpiresAt) into Downstream Headers
         context.AddClaimsTransform();
 
         // 2. Add custom Gateway Server identifier header
