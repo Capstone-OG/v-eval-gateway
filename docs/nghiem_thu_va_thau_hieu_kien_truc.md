@@ -2,8 +2,8 @@
 
 > **Dự án**: Hệ thống V-ACT 2026  
 > **Người nghiệm thu & Đánh giá**: Developer & AI Agent Pair-Programming  
-> **Ngày nghiệm thu**: 14/09/2026  
-> **Đánh giá tổng thể**: **Đạt chuẩn Production / Cấu hình bảo mật nâng cao**
+> **Ngày nghiệm thu**: 18/09/2026  
+> **Đánh giá tổng thể**: **Đạt chuẩn Production / Cấu hình bảo mật nâng cao V2 ERD**
 
 ---
 
@@ -15,9 +15,9 @@
 
 ---
 
-### 2. Thấu hiểu luồng Bảo mật & Claims Transformer (`ClaimsHeaderTransform.cs`)
-- **Chống giả mạo Header (Anti-Header-Spoofing)**: Luôn gọi `Remove()` các header `X-User-Id`, `X-User-Role`, `X-User-Email` đầu tiên để ngăn chặn kẻ xấu từ internet tự tạo header giả truyền qua Gateway.
-- **Bóc tách JWT Claims**: Trích xuất `UserId`, `Role`, `Email` từ Token đã xác thực và tự động đính kèm vào Proxy Request Header gửi xuống Microservice con.
+### 2. Thấu hiểu luồng Bảo mật & Claims Transformer V2 (`ClaimsHeaderTransform.cs`)
+- **Chống giả mạo Header (Anti-Header-Spoofing)**: Luôn gọi `Remove()` các header `X-User-Id`, `X-User-Role`, `X-User-Email`, `X-Campus-Id` đầu tiên để ngăn chặn kẻ xấu từ internet tự tạo header giả truyền qua Gateway.
+- **Bóc tách JWT Claims Chuẩn V2 ERD**: Trích xuất `UserId` (`sub`), `Role` (`role`), `Email` (`email`), và `CampusId` (`campus_id`) từ Token đã xác thực và tự động đính kèm vào Proxy Request Header gửi xuống Microservice con.
 - **Cơ chế Cảnh báo Refresh Token tự động (`X-Token-Refresh-Required`)**:
   - Trích xuất claim `exp` (Unix Timestamp) để tính số giây còn sống của Token (`remainingSeconds`).
   - Nếu `remainingSeconds <= RefreshThresholdMinutes` (Cấu hình linh hoạt qua `appsettings.json`, mặc định 5 phút), Gateway sẽ tự động đính kèm Response Header `X-Token-Refresh-Required: true`.
@@ -40,7 +40,7 @@
 
 ### 5. Thấu hiểu CORS & Giao tiếp Docker (`ServiceCollectionExtensions.cs`)
 - **CORS tại Gateway**: Mở chính sách `AllowAll` cho phép Frontend (Web SPA/Mobile Client) gọi API qua Gateway không bị trình duyệt chặn (Same-Origin Policy).
-- **Giao tiếp Server-to-Server trên Docker**: Giữa Gateway và các Service Containers là giao tiếp nội bộ Server-to-Server, không chịu ảnh hưởng bởi CORS. Khi đưa lên Docker chỉ cần tham gia chung `veval-network` là kết nối mượt mà.
+- **Giao tiếp Server-to-Server trên Docker**: Giữa Gateway và các Service Containers là giao tiếp nội bộ Server-to-Server, không chịu ảnh hưởng bởi CORS. Khi đưa lên Docker chỉ cần tham gia chung `veval_network` là kết nối mượt mà.
 
 ---
 
