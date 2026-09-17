@@ -1,6 +1,10 @@
 # Nhật Ký Cập Nhật - V-Eval Gateway Service
 
-## [18/09/2026] - Phát Hành Công Cụ Push Độc Lập `Scripts/push.bat` Cho Gateway Service
+## [18/09/2026] - Chuẩn Hóa Bộ Tài Liệu Docs (`daily.md`, `process.md`, `architecture_acceptance.md`) & Script Push
+- **Chuẩn Hóa Bộ Docs Service**:
+  - Đổi tên `docs/daily_check_log.md` -> [`docs/daily.md`](file:///e:/CapStone/All%20Services/V-Eval-Gateway/docs/daily.md).
+  - Đổi tên `docs/nghiem_thu_va_thau_hieu_kien_truc.md` -> [`docs/architecture_acceptance.md`](file:///e:/CapStone/All%20Services/V-Eval-Gateway/docs/architecture_acceptance.md).
+  - Bổ sung file lộ trình quy trình [`docs/process.md`](file:///e:/CapStone/All%20Services/V-Eval-Gateway/docs/process.md).
 - **Tích Hợp `Scripts/push.bat` Độc Lập**:
   - Khởi tạo công cụ [`Scripts/push.bat`](file:///e:/CapStone/All%20Services/V-Eval-Gateway/Scripts/push.bat) độc lập cho riêng Gateway Service.
   - Hỗ trợ Push nhanh trên nhánh hiện tại, chọn nhánh đã có qua Menu đánh số, hoặc tạo nhánh mới tự động.
