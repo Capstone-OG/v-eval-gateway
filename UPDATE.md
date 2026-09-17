@@ -1,5 +1,11 @@
 # Nhật Ký Cập Nhật - V-Eval Gateway Service
 
+## [18/09/2026] - Phát Hành Công Cụ Push Độc Lập `Scripts/push.bat` Cho Gateway Service
+- **Tích Hợp `Scripts/push.bat` Độc Lập**:
+  - Khởi tạo công cụ [`Scripts/push.bat`](file:///e:/CapStone/All%20Services/V-Eval-Gateway/Scripts/push.bat) độc lập cho riêng Gateway Service.
+  - Hỗ trợ Push nhanh trên nhánh hiện tại, chọn nhánh đã có qua Menu đánh số, hoặc tạo nhánh mới tự động.
+  - Tích hợp kiểm tra đồng bộ lịch sử Git, tự động pull code khi chậm (behind) và đưa ra **Cảnh báo Đỏ (Red Warning)** ngắt quy trình nếu bị xung đột lịch sử (Conflict/Diverged).
+
 ## [16/09/2026 - 17/09/2026] - Đồng Bộ Cấu Trúc JWT Claims V2 ERD & Thêm Header `X-Campus-Id`
 - **Nâng Cấp Security Claims Transformer (`ClaimsHeaderTransform.cs`)**:
   - Bổ sung trích xuất claim `campus_id` từ JWT Token và đính kèm vào Header **`X-Campus-Id`** gửi xuống downstream microservices (`Students`, `Teachers`, `AcademicManagers`).

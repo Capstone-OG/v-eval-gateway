@@ -1,5 +1,13 @@
 # NHẬT KÝ KIỂM TRẢ TIẾN ĐỘ VẬN HÀNH (DAILY CHECK LOG) - V-EVAL GATEWAY
 
+## [18/09/2026] - Phát Hành Công Cụ Push Độc Lập `Scripts/push.bat` Cho Gateway Service
+- **Tích Hợp `Scripts/push.bat` Độc Lập**:
+  - Khởi tạo script [`Scripts/push.bat`](file:///e:/CapStone/All%20Services/V-Eval-Gateway/Scripts/push.bat) độc lập cho Gateway.
+  - Hỗ trợ 3 chế độ Push (nhánh hiện tại, chọn nhánh có sẵn qua menu số, tạo nhánh mới).
+  - Tự động kiểm tra đồng bộ lịch sử Git, tự động pull code khi bi cham (behind) và đưa ra **Cảnh báo Đỏ (Red Warning)** ngắt quy trình nếu phát hiện xung đột lịch sử (Conflict/Diverged).
+
+---
+
 ## [16/09/2026 - 17/09/2026] - Đồng Bộ Cấu Trúc JWT Claims V2 ERD & Thêm Header `X-Campus-Id`
 - **Đồng Bộ JWT Claims với Sơ Đồ V2 ERD (`VACT_SCHEMA_V2_ERD`)**:
   - Đối chiếu sơ đồ PlantUML V2 ERD và cập nhật DDL trong [`docs/SQL/SQL.sql`](file:///e:/CapStone/docs/SQL/SQL.sql).
