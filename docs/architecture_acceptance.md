@@ -48,16 +48,24 @@
 - Tất cả các file chứa Mật khẩu / Connection String / API Key thật (`appsettings.json`, `appsettings.Development.json`) đều được untrack và đưa vào `.gitignore`.
 - Chỉ lưu giữ file [`appsettings.example.json`](file:///e:/CapStone/All%20Services/V-Eval-Gateway/V-Eval-Gateway.API/appsettings.example.json) chứa các Label tham số mẫu trên Git repository, đảm bảo chuẩn mã nguồn mở & an toàn Production 100%.
 
+### 7. Thấu hiểu Kiến trúc Định tuyến Đa Nền tảng AI Engine (.NET & Python FastAPI RAG)
+- **Tách Biệt Trách Nhiệm (Separation of Concerns)**:
+  - Cụm **.NET Core AI Engine** (`http://localhost:5104`): Chịu trách nhiệm bóc tách OCR đề thi PDF, nạp SGK file lớn 250MB, quản lý Job ID polling, đo kiểm Vision AI. Định tuyến qua `/api/ai-engine/{**catch-all}`, `/view-exam`, `/view-diagnostic`, `/view-textbook`.
+  - Cụm **Python FastAPI RAG Service** (`http://localhost:8000`): Chịu trách nhiệm chẩn đoán năng lực IRT 2PL / BKT (Core Flow 1), sinh đề thi AI động theo Bloom 6 cấp độ (`generate-exam`), và Gia sư AI Socratic RAG (hỗ trợ SSE Token Streaming). Định tuyến qua `/api/v1/diagnostic/{**catch-all}`, `/api/v1/chat/{**catch-all}`, `/api/v1/documents/{**catch-all}`.
+- **Lợi ích Vận hành**: Web Client và các Microservices chỉ cần nhìn thấy một Endpoint duy nhất là API Gateway (`:5212`), không bao giờ bị lỗi CORS và không cần phân biệt cổng 5104 hay 8000.
+
 ---
 
 ## 📑 BẢNG NGHIỆM THU DANH MỤC FILE CODE GATEWAY
 
 | Tên Module | Tệp Code / Tài Liệu | Trạng Thái Nghiệm Thu |
 | :--- | :--- | :---: |
-| **Middlewares** | [`CorrelationIdMiddleware.cs`](file:///e:/CapStone/All%20Services/V-Eval-Gateway/V-Eval-Gateway.API/Middlewares/CorrelationIdMiddleware.cs), [`GlobalExceptionMiddleware.cs`](file:///e:/CapStone/All%20Services/V-Eval-Gateway/V-Eval-Gateway.API/Middlewares/GlobalExceptionMiddleware.cs), [`RequestLoggingMiddleware.cs`](file:///e:/CapStone/All%20Services/V-Eval-Gateway/V-Eval-Gateway.API/Middlewares/RequestLoggingMiddleware.cs) | **ĐẠT (100%)** |
-| **Security** | [`ClaimsHeaderTransform.cs`](file:///e:/CapStone/All%20Services/V-Eval-Gateway/V-Eval-Gateway.API/Security/ClaimsHeaderTransform.cs), [`GatewayAuthExtensions.cs`](file:///e:/CapStone/All%20Services/V-Eval-Gateway/V-Eval-Gateway.API/Security/GatewayAuthExtensions.cs) | **ĐẠT (100%)** |
-| **Transforms** | [`GatewayTransformProvider.cs`](file:///e:/CapStone/All%20Services/V-Eval-Gateway/V-Eval-Gateway.API/Transforms/GatewayTransformProvider.cs) | **ĐẠT (100%)** |
-| **RateLimiting** | [`RateLimiterExtensions.cs`](file:///e:/CapStone/All%20Services/V-Eval-Gateway/V-Eval-Gateway.API/RateLimiting/RateLimiterExtensions.cs) | **ĐẠT (100%)** |
-| **Health** | [`DownstreamHealthCheck.cs`](file:///e:/CapStone/All%20Services/V-Eval-Gateway/V-Eval-Gateway.API/Health/DownstreamHealthCheck.cs) | **ĐẠT (100%)** |
-| **Extensions** | [`ServiceCollectionExtensions.cs`](file:///e:/CapStone/All%20Services/V-Eval-Gateway/V-Eval-Gateway.API/Extensions/ServiceCollectionExtensions.cs), [`MiddlewarePipelineExtensions.cs`](file:///e:/CapStone/All%20Services/V-Eval-Gateway/V-Eval-Gateway.API/Extensions/MiddlewarePipelineExtensions.cs) | **ĐẠT (100%)** |
-| **Config & Git** | [`appsettings.example.json`](file:///e:/CapStone/All%20Services/V-Eval-Gateway/V-Eval-Gateway.API/appsettings.example.json), [` .gitignore`](file:///e:/CapStone/All%20Services/V-Eval-Gateway/.gitignore) | **ĐẠT (100%)** |
+| **Middlewares** | `CorrelationIdMiddleware.cs`, `GlobalExceptionMiddleware.cs`, `RequestLoggingMiddleware.cs` | **ĐẠT (100%)** |
+| **Security** | `ClaimsHeaderTransform.cs`, `GatewayAuthExtensions.cs` | **ĐẠT (100%)** |
+| **Transforms** | `GatewayTransformProvider.cs` | **ĐẠT (100%)** |
+| **RateLimiting** | `RateLimiterExtensions.cs` | **ĐẠT (100%)** |
+| **Health** | `DownstreamHealthCheck.cs` | **ĐẠT (100%)** |
+| **Extensions** | `ServiceCollectionExtensions.cs`, `MiddlewarePipelineExtensions.cs` | **ĐẠT (100%)** |
+| **AI Routing** | `appsettings.json`, `appsettings.example.json` | **ĐẠT (100%)** |
+| **Config & Git** | `appsettings.example.json`, `.gitignore` | **ĐẠT (100%)** |
+

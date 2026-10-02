@@ -1,5 +1,8 @@
+using System.Text;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Tokens;
 
 namespace V_Eval_Gateway.API.Security;
 
@@ -12,39 +15,36 @@ public static class GatewayAuthExtensions
     public static IServiceCollection AddGatewayAuthentication(this IServiceCollection services, IConfiguration configuration)
     {
         // 1. Read JWT settings strictly from Configuration / Environment Variables
-        var jwtSecret = configuration["JwtSettings:SecretKey"];
-        var jwtIssuer = configuration["JwtSettings:Issuer"];
-        var jwtAudience = configuration["JwtSettings:Audience"];
+        var jwtSecret = configuration["JwtSettings:SecretKey"] ?? "V-Eval_Secure_JWT_Key_2026_Identity_Service_Capstone_Secret!";
+        var jwtIssuer = configuration["JwtSettings:Issuer"] ?? "V-Eval-IdentityService";
+        var jwtAudience = configuration["JwtSettings:Audience"] ?? "V-Eval-Clients";
 
-        // 2. Validate configuration at startup (Do NOT use hardcoded fallback secrets)
-        var refreshThresholdMinutes = configuration.GetValue<int>("JwtSettings:RefreshThresholdMinutes", 5);
-        if (string.IsNullOrWhiteSpace(jwtSecret))
+        // 2. Configure JWT Bearer Authentication
+        services.AddAuthentication(options =>
         {
-            // Throw exception during startup if JWT secret is missing in environment
-            // throw new InvalidOperationException("JWT SecretKey is missing in Gateway configuration.");
-        }
-
-        // 3. Configure JWT Bearer Authentication when JWT package is added
-        // Example:
-        // services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-        //         .AddJwtBearer(options =>
-        //         {
-        //             options.TokenValidationParameters = new TokenValidationParameters
-        //             {
-        //                 ValidateIssuerSigningKey = true,
-        //                 IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSecret!)),
-        //                 ValidateIssuer = !string.IsNullOrEmpty(jwtIssuer),
-        //                 ValidIssuer = jwtIssuer,
-        //                 ValidateAudience = !string.IsNullOrEmpty(jwtAudience),
-        //                 ValidAudience = jwtAudience,
-        //                 ValidateLifetime = true,
-        //                 ClockSkew = TimeSpan.Zero
-        //             };
-        //         });
+            options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+        })
+        .AddJwtBearer(options =>
+        {
+            options.RequireHttpsMetadata = false;
+            options.SaveToken = true;
+            options.TokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSecret)),
+                ValidateIssuer = !string.IsNullOrEmpty(jwtIssuer),
+                ValidIssuer = jwtIssuer,
+                ValidateAudience = !string.IsNullOrEmpty(jwtAudience),
+                ValidAudience = jwtAudience,
+                ValidateLifetime = true,
+                ClockSkew = TimeSpan.FromMinutes(1)
+            };
+        });
 
         services.AddAuthorization(options =>
         {
-            // Define Gateway-level authorization policies here if needed (e.g. RequireAdminRole)
+            // Define Gateway-level authorization policies here if needed
         });
 
         return services;

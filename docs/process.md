@@ -15,11 +15,14 @@
   - Đính kèm Response Header `X-Token-Refresh-Required: true` khi JWT còn < 5 phút.
 
 ### 2. Danh Sách Mục & Tuyến Đường Định Tuyến (YARP Routes)
-- `/api/v1/auth/{**catch-all}` -> Trỏ về Identity Service (`:5001`).
-- `/api/v1/users/{**catch-all}` -> Trỏ về Identity Service (`:5001`).
-- `/api/content/{**catch-all}` -> Trỏ về Content Service (`:5249`).
-- `/api/practice/{**catch-all}` -> Trỏ về Practice Service (`:5002`).
-- `/api/ai-engine/{**catch-all}` -> Trỏ về AI Engine (`:5104`).
+- `/api/v1/auth/{**catch-all}` -> Trỏ về Identity Service (`:5155` / `:5001`).
+- `/api/v1/users/{**catch-all}` -> Trỏ về Identity Service (`:5155` / `:5001`).
+- `/api/content/{**catch-all}` & `/api/v1/content/{**catch-all}` -> Trỏ về Content Service (`:5249`).
+- `/api/practice/{**catch-all}` & `/api/v1/practice/{**catch-all}` -> Trỏ về Practice Service (`:5261` / `:5002`).
+- `/api/ai-engine/{**catch-all}` -> Trỏ về .NET AI Engine (`:5104`) (Exam OCR, Textbook Ingestion, Checkpoint).
+- `/api/v1/diagnostic/{**catch-all}` -> Trỏ về Python FastAPI RAG Service (`:8000`) (Sinh đề AI, Phân tích IRT 2PL/BKT).
+- `/api/v1/chat/{**catch-all}` -> Trỏ về Python FastAPI RAG Service (`:8000`) (Chat Socratic RAG, SSE Streaming).
+- `/api/v1/documents/{**catch-all}` -> Trỏ về Python FastAPI RAG Service (`:8000`) (RAG Knowledge Ingestion).
 
 ---
 
@@ -27,12 +30,13 @@
 
 | STT | Hạng Mục / Chức Năng | Vị Trí Triển Khai trong Code | Trạng Thái | Tiến Độ (%) | Ghi Chú Chi Tiết |
 | :---: | :--- | :--- | :---: | :---: | :--- |
-| 1 | **YARP Reverse Proxy Engine** | `Program.cs`, `appsettings.json` | 🟢 Hoàn thành | 100% | Đã định tuyến đầy đủ sang 4 microservices con |
+| 1 | **YARP Reverse Proxy Engine** | `Program.cs`, `appsettings.json` | 🟢 Hoàn thành | 100% | Đã định tuyến đầy đủ sang các microservices downstream |
 | 2 | **Tập Trung JWT Authentication** | `Security/GatewayAuthExtensions.cs` | 🟢 Hoàn thành | 100% | Validate SecretKey, Issuer, Audience, Lifetime |
 | 3 | **Anti-Header Spoofing** | `Security/ClaimsHeaderTransform.cs` | 🟢 Hoàn thành | 100% | Strip bỏ toàn bộ header `X-` từ client gửi lên |
 | 4 | **Claims Transformation Engine** | `Security/ClaimsHeaderTransform.cs` | 🟢 Hoàn thành | 100% | Trích xuất `X-User-Id`, `X-User-Role`, `X-User-Email` |
 | 5 | **Đa Cơ Sở (`X-Campus-Id`)** | `Security/ClaimsHeaderTransform.cs` | 🟢 Hoàn thành | 100% | Đồng bộ theo Sơ đồ V2 ERD PlantUML (`campus_id`) |
 | 6 | **Token Expiration Warning** | `Security/ClaimsHeaderTransform.cs` | 🟢 Hoàn thành | 100% | Trả response header `X-Token-Refresh-Required: true` |
 | 7 | **Script Push Độc Lập** | `Scripts/push.bat` | 🟢 Hoàn thành | 100% | Đóng gói script push 3 chế độ kèm Red Warning |
-| 8 | **Rate Limiting Tập Trung** | `Transforms/` (dự kiến) | 🟡 Đang chờ | 0% | Sẽ triển khai ở Milestone tiếp theo |
-| 9 | **Health Check Dashboard** | `Program.cs` (dự kiến) | 🟡 Đang chờ | 0% | Kiểm tra liveness/readiness của 5 services |
+| 8 | **Định Tuyến Kép AI Engine (.NET & Python RAG)** | `appsettings.json` | 🟢 Hoàn thành | 100% | Định tuyến đồng thời `.NET AI Engine` (`:5104`) và `Python RAG` (`:8000`) |
+| 9 | **Rate Limiting Tập Trung** | `RateLimiting/` | 🟢 Hoàn thành | 100% | Đã kích hoạt Fixed Window Rate Limiting |
+| 10 | **Health Check Dashboard** | `Health/` | 🟢 Hoàn thành | 100% | Endpoint `/healthz` và DownstreamHealthCheck probe |

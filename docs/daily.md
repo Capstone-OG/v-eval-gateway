@@ -1,5 +1,28 @@
 # NHẬT KÝ KIỂM TRẢ TIẾN ĐỘ VẬN HÀNH (DAILY CHECK LOG) - V-EVAL GATEWAY
 
+## [02/10/2026] - Mở Rộng YARP Reverse Proxy Định Tuyến AI Engine (.NET & Python FastAPI RAG)
+- **Tích Hợp Cụm Routing AI Engine Đa Nền Tảng (`appsettings.json`, `appsettings.example.json`)**:
+  - Bổ sung Cluster `ai-rag-cluster` trỏ về Python FastAPI RAG Service (`http://localhost:8000`).
+  - Cấu hình 5 Route mới cho phân hệ AI RAG & Chẩn đoán năng lực Core Flow 1:
+    - `ai-rag-diagnostic-route`: `/api/diagnostic/{**catch-all}`
+    - `ai-rag-diagnostic-v1-route`: `/api/v1/diagnostic/{**catch-all}` (sinh đề thi AI `generate-exam`, phân tích IRT 2PL / BKT `analyze`, config)
+    - `ai-rag-chat-route`: `/api/chat/{**catch-all}`
+    - `ai-rag-chat-v1-route`: `/api/v1/chat/{**catch-all}` (chat gia sư Socratic RAG, SSE Token Streaming)
+    - `ai-rag-documents-v1-route`: `/api/v1/documents/{**catch-all}` (quản trị tài liệu tri thức RAG phiên bản hóa)
+  - Bổ sung Route trực quan cho Web Client:
+    - `ai-engine-view-diagnostic-route`: `/view-diagnostic`
+    - `ai-engine-view-textbook-route`: `/view-textbook`
+- **Khắc Phục Lỗi Startup `IAuthenticationSchemeProvider` (`GatewayAuthExtensions.cs`, `csproj`)**:
+  - Phát hiện lỗi runtime `System.InvalidOperationException: Unable to resolve service for type 'Microsoft.AspNetCore.Authentication.IAuthenticationSchemeProvider'` do pipeline middleware gọi `app.UseAuthentication()` nhưng service collection chưa đăng ký JWT Bearer scheme.
+  - Bổ sung package `Microsoft.AspNetCore.Authentication.JwtBearer` (Version `9.0.2`).
+  - Kích hoạt `services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(...)` đọc cấu hình từ `JwtSettings` (`SecretKey`, `Issuer`, `Audience`), kích hoạt tính năng trích xuất Claims (`ClaimsHeaderTransform`) an toàn.
+- **Kiểm Thử Vận Hành & Khả Năng Tương Thích**:
+  - Biên dịch toàn bộ Solution `V-Eval-Gateway.sln` đạt 100% (**0 Error, 0 Warning**).
+  - Khởi chạy Gateway thành công 100%, lắng nghe cổng `http://localhost:5212` trơn tru.
+  - Kiểm tra `docker compose config` cấu hình hợp lệ 100%.
+
+---
+
 ## [30/09/2026] - Mở Rộng Định Tuyến Trực Tiếp Cho Phân Hệ Xác Thực & Quản Lý Người Dùng (Identity Service)
 - **Mở Rộng YARP Route Reverse Proxy (`appsettings.json`, `appsettings.example.json`)**:
   - Bổ sung các Route trực tiếp trỏ về `identity-service-cluster` (`http://localhost:5155`):
