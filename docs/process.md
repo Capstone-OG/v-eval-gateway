@@ -40,3 +40,4 @@
 | 8 | **Định Tuyến Kép AI Engine (.NET & Python RAG)** | `appsettings.json` | 🟢 Hoàn thành | 100% | Định tuyến đồng thời `.NET AI Engine` (`:5104`) và `Python RAG` (`:8000`) |
 | 9 | **Rate Limiting Tập Trung** | `RateLimiting/` | 🟢 Hoàn thành | 100% | Đã kích hoạt Fixed Window Rate Limiting |
 | 10 | **Health Check Dashboard** | `Health/` | 🟢 Hoàn thành | 100% | Endpoint `/healthz` và DownstreamHealthCheck probe |
+| 11 | **Chuẩn Hóa Cấu Hình & Centralized Config** | `V-Eval-Gateway.API/appsettings.example.json` | 🟢 Hoàn thành | 100% | Cập nhật đầy đủ routes và cluster ports, hỗ trợ sync_config.bat |

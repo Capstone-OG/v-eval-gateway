@@ -46,9 +46,16 @@
 
 ### 6. Thấu hiểu Cấu hình Bảo mật Git (`appsettings.example.json` & `.gitignore`)
 - Tất cả các file chứa Mật khẩu / Connection String / API Key thật (`appsettings.json`, `appsettings.Development.json`) đều được untrack và đưa vào `.gitignore`.
-- Chỉ lưu giữ file [`appsettings.example.json`](file:///e:/CapStone/All%20Services/V-Eval-Gateway/V-Eval-Gateway.API/appsettings.example.json) chứa các Label tham số mẫu trên Git repository, đảm bảo chuẩn mã nguồn mở & an toàn Production 100%.
+- Chỉ lưu giữ file [`appsettings.example.json`](../V-Eval-Gateway.API/appsettings.example.json) chứa các Label tham số mẫu trên Git repository, đảm bảo chuẩn mã nguồn mở & an toàn Production 100%.
 
-### 7. Thấu hiểu Kiến trúc Định tuyến Đa Nền tảng AI Engine (.NET & Python FastAPI RAG)
+---
+
+### 7. Kiến Trúc Quản Lý Cấu Hình Tập Trung (Centralized Config & Sync Tool)
+- **Kiến trúc Meta-Repo / System-Repo Configs**: Tách biệt cấu hình môi trường chuẩn vào thư mục `Configs/V-Eval-Gateway/` của `System-Repo`, loại bỏ hoàn toàn nhu cầu lưu trữ cấu hình thủ công trên Notion.
+- **Công cụ đồng bộ độc lập (`sync_config.bat`)**: Cho phép dev chủ động nạp cấu hình (`sync down`) hoặc thu thập cấu hình (`sync up`) mà không can thiệp hay làm gián đoạn quy trình push đơn lẻ trên từng repo con.
+- **Cơ chế an toàn lót sàn (Zero-Drift Fallback)**: Tích hợp cờ `--install-missing` vào `setup.bat`, `pull.bat`, `run_local.bat` và `run_docker.bat`, tự động bổ sung file cấu hình nếu thiếu trước khi chạy dịch vụ.
+
+### 8. Thấu hiểu Kiến trúc Định tuyến Đa Nền tảng AI Engine (.NET & Python FastAPI RAG)
 - **Tách Biệt Trách Nhiệm (Separation of Concerns)**:
   - Cụm **.NET Core AI Engine** (`http://localhost:5104`): Chịu trách nhiệm bóc tách OCR đề thi PDF, nạp SGK file lớn 250MB, quản lý Job ID polling, đo kiểm Vision AI. Định tuyến qua `/api/ai-engine/{**catch-all}`, `/view-exam`, `/view-diagnostic`, `/view-textbook`.
   - Cụm **Python FastAPI RAG Service** (`http://localhost:8000`): Chịu trách nhiệm chẩn đoán năng lực IRT 2PL / BKT (Core Flow 1), sinh đề thi AI động theo Bloom 6 cấp độ (`generate-exam`), và Gia sư AI Socratic RAG (hỗ trợ SSE Token Streaming). Định tuyến qua `/api/v1/diagnostic/{**catch-all}`, `/api/v1/chat/{**catch-all}`, `/api/v1/documents/{**catch-all}`.
@@ -66,6 +73,7 @@
 | **RateLimiting** | `RateLimiterExtensions.cs` | **ĐẠT (100%)** |
 | **Health** | `DownstreamHealthCheck.cs` | **ĐẠT (100%)** |
 | **Extensions** | `ServiceCollectionExtensions.cs`, `MiddlewarePipelineExtensions.cs` | **ĐẠT (100%)** |
+| **Configuration** | `appsettings.example.json`, `Configs/V-Eval-Gateway/appsettings.json` | **ĐẠT (100%)** |
 | **AI Routing** | `appsettings.json`, `appsettings.example.json` | **ĐẠT (100%)** |
 | **Config & Git** | `appsettings.example.json`, `.gitignore` | **ĐẠT (100%)** |
 
