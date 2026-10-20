@@ -1,12 +1,10 @@
-# Nhật Ký Cập Nhật (Update Log) - V-Eval Gateway Service
+# NHẬT KÝ CẬP NHẬT (UPDATE LOG) - V-EVAL GATEWAY SERVICE
 
-## [07/10/2026] - Đồng Bộ & Chuẩn Hóa Khung Cấu Hình YARP Reverse Proxy Cho Toàn Hệ Thống
+## [20/10/2026] - Nâng Cấp YARP Reverse Proxy: Khắc Phục Triệt Để Lỗi 504 Gateway Timeout Với ActivityTimeout 10 Phút Cho Cụm AI
 
-- **Chuẩn Hóa File Cấu Hình Mẫu (`appsettings.example.json`)**:
-  - Cập nhật đầy đủ toàn bộ danh mục routes mới nhất bao gồm AI RAG Diagnostic, Socratic Chat, Content Service, Identity Service IAM và Practice Service.
-  - Cập nhật chính xác port đích của các cluster microservices (Identity: `:5155`, Content: `:5249`, Practice: `:5261`, AI Engine: `:5104`, AI RAG: `:8000`).
-  - Đặt placeholder bảo mật cho khóa bí mật `JwtSettings:SecretKey`.
-- **Đồng Bộ Hệ Thống Cấu Hình Tập Trung**:
-  - Tích hợp vào thư mục `Configs/V-Eval-Gateway/` của System-Repo để tự động cấp phát khi chạy `sync_config.bat`.
-- **Kiểm Thử Biên Dịch**:
-  - `dotnet build` đạt 100% thành công (0 warning, 0 error).
+- **Khắc Phục Lỗi 504 Gateway Timeout Cho Các Tác Vụ Bóc Tách Tri Thức AI**:
+  - *Nguyên nhân sự cố*: Mặc định YARP Reverse Proxy v2.3.0 áp dụng thời gian chờ `ActivityTimeout` là 100 giây. Khi AI Engine thực hiện các tác vụ bóc tách tài liệu khổ lớn hoặc sinh nội dung 3D/2D chuyên sâu, thời gian sinh văn bản của Google Gemini API vượt ngưỡng 100s dẫn đến Gateway ngắt kết nối và trả về mã lỗi `HTTP 504 Gateway Timeout` cho Web Client.
+  - *Cấu hình ActivityTimeout 10 Phút Cho Cụm AI*:
+    + Nâng cấp cấu hình `HttpRequest: { ActivityTimeout: "00:10:00" }` trong `appsettings.json` cho cả 2 cụm: `ai-engine-cluster` (Port 5104) và `ai-rag-cluster` (Port 8000).
+    + Đảm bảo các luồng upload tài liệu PDF/DOCX, bóc tách tri thức, OCR và RAG Psychometrics có đủ thời gian hoàn thành trọn vẹn mà không bao giờ bị Gateway ngắt ngang.
+  - *Đồng bộ cấu hình tập trung*: Cập nhật đồng thời tại `All Services/V-Eval-Gateway/V-Eval-Gateway.API/appsettings.json` và `Configs/V-Eval-Gateway/appsettings.json`.
