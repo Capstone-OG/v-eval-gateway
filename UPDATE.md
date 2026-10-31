@@ -1,10 +1,13 @@
 # NHẬT KÝ CẬP NHẬT (UPDATE LOG) - V-EVAL GATEWAY SERVICE
 
-## [20/10/2026] - Nâng Cấp YARP Reverse Proxy: Khắc Phục Triệt Để Lỗi 504 Gateway Timeout Với ActivityTimeout 10 Phút Cho Cụm AI
+## [27/10/2026] - Khởi Tạo Bộ Unit Test Cho CorrelationId Middleware Và Tích Hợp CI Test
 
-- **Khắc Phục Lỗi 504 Gateway Timeout Cho Các Tác Vụ Bóc Tách Tri Thức AI**:
-  - *Nguyên nhân sự cố*: Mặc định YARP Reverse Proxy v2.3.0 áp dụng thời gian chờ `ActivityTimeout` là 100 giây. Khi AI Engine thực hiện các tác vụ bóc tách tài liệu khổ lớn hoặc sinh nội dung 3D/2D chuyên sâu, thời gian sinh văn bản của Google Gemini API vượt ngưỡng 100s dẫn đến Gateway ngắt kết nối và trả về mã lỗi `HTTP 504 Gateway Timeout` cho Web Client.
-  - *Cấu hình ActivityTimeout 10 Phút Cho Cụm AI*:
-    + Nâng cấp cấu hình `HttpRequest: { ActivityTimeout: "00:10:00" }` trong `appsettings.json` cho cả 2 cụm: `ai-engine-cluster` (Port 5104) và `ai-rag-cluster` (Port 8000).
-    + Đảm bảo các luồng upload tài liệu PDF/DOCX, bóc tách tri thức, OCR và RAG Psychometrics có đủ thời gian hoàn thành trọn vẹn mà không bao giờ bị Gateway ngắt ngang.
-  - *Đồng bộ cấu hình tập trung*: Cập nhật đồng thời tại `All Services/V-Eval-Gateway/V-Eval-Gateway.API/appsettings.json` và `Configs/V-Eval-Gateway/appsettings.json`.
+- **Khởi Tạo Dự Án Kiểm Thử `V-Eval-Gateway.Tests` (3 Tests)**:
+  - Thiết lập dự án kiểm thử theo chuẩn xUnit và .NET 9, tham chiếu đến `V-Eval-Gateway.API`.
+  - Triển khai bộ 3 unit test cho middleware truy vết [`CorrelationIdMiddlewareTests.cs`](./V-Eval-Gateway.Tests/Middlewares/CorrelationIdMiddlewareTests.cs):
+    - Kiểm thử khi request không mang `X-Correlation-ID`: Middleware tự động sinh GUID mới và gán vào Headers cũng như `TraceIdentifier`.
+    - Kiểm thử khi request đã có sẵn `X-Correlation-ID`: Middleware bảo tồn và tái sử dụng chính xác mã định danh đã truyền.
+    - Kiểm thử middleware luôn gọi chuyển tiếp `_next(context)` đến middleware tiếp theo trong pipeline.
+  - Tích hợp project vào `V-Eval-Gateway.sln`.
+- **Tích Hợp Tự Động Hóa CI/CD Workflow**:
+  - Bổ sung bước thực thi `dotnet test --no-build --configuration Release --verbosity normal` vào `.github/workflows/ci.yml`.
