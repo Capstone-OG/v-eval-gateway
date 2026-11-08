@@ -18,7 +18,8 @@
 - `/api/v1/auth/{**catch-all}` -> Trỏ về Identity Service (`:5155` / `:5001`).
 - `/api/v1/users/{**catch-all}` -> Trỏ về Identity Service (`:5155` / `:5001`).
 - `/api/content/{**catch-all}` & `/api/v1/content/{**catch-all}` -> Trỏ về Content Service (`:5249`).
-- `/api/practice/{**catch-all}` & `/api/v1/practice/{**catch-all}` -> Trỏ về Practice Service (`:5261` / `:5002`).
+- `/api/practice/{**catch-all}`, `/api/v1/practice/{**catch-all}` & `/api/v1/ai-tutor/{**catch-all}` -> Trỏ về Practice Service (`:5261` / `:5002`, `ActivityTimeout = 00:05:00` cho SSE Streaming).
+- `/swagger` & `/swagger-docs/{practice|identity|content|ai-engine}/{**catch-all}` -> Cổng kiểm thử Unified Swagger UI đa dịch vụ qua Gateway (`:5212`).
 - `/api/ai-engine/{**catch-all}` -> Trỏ về .NET AI Engine (`:5104`) (Exam OCR, Textbook Ingestion, Checkpoint).
 - `/api/v1/diagnostic/{**catch-all}` -> Trỏ về Python FastAPI RAG Service (`:8000`) (Sinh đề AI, Phân tích IRT 2PL/BKT).
 - `/api/v1/chat/{**catch-all}` -> Trỏ về Python FastAPI RAG Service (`:8000`) (Chat Socratic RAG, SSE Streaming).
@@ -41,3 +42,4 @@
 | 9 | **Rate Limiting Tập Trung** | `RateLimiting/` | 🟢 Hoàn thành | 100% | Đã kích hoạt Fixed Window Rate Limiting |
 | 10 | **Health Check Dashboard** | `Health/` | 🟢 Hoàn thành | 100% | Endpoint `/healthz` và DownstreamHealthCheck probe |
 | 11 | **Chuẩn Hóa Cấu Hình & Centralized Config** | `V-Eval-Gateway.API/appsettings.example.json` | 🟢 Hoàn thành | 100% | Cập nhật đầy đủ routes và cluster ports, hỗ trợ sync_config.bat |
+| 12 | **Unified Swagger Portal, Định Tuyến `/api/v1/ai-tutor` & Chuẩn Hóa `MapInboundClaims = false`** | `Program.cs`, `Security/GatewayAuthExtensions.cs`, `appsettings.example.json` | 🟢 Hoàn thành | 100% | Gom tài liệu OpenAPI 4 dịch vụ tại `/swagger`, giữ nguyên JWT claims chuẩn (`sub`, `email`, `exp`), bổ sung route `/api/v1/ai-tutor/{**catch-all}` & Docker cluster overrides |
