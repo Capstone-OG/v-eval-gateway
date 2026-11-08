@@ -1,5 +1,19 @@
 # NHẬT KÝ KIỂM TRẢ TIẾN ĐỘ VẬN HÀNH (DAILY CHECK LOG) - V-EVAL GATEWAY
 
+## [08/11/2026] - Tích Hợp Unified Swagger Portal Đa Dịch Vụ, Bổ Sung Định Tuyến Core Flow 4/6 (`/api/v1/ai-tutor`) & Chuẩn Hóa JWT Claims (`MapInboundClaims = false`)
+
+- **Cổng Kiểm Thử Tập Trung Unified Swagger UI (`http://localhost:5212/swagger`) ([`Program.cs`](../V-Eval-Gateway.API/Program.cs), [`V-Eval-Gateway.API.csproj`](../V-Eval-Gateway.API/V-Eval-Gateway.API.csproj))**:
+  - Tích hợp `Swashbuckle.AspNetCore 7.3.1` và cấu hình `UseSwaggerUI` gom toàn bộ tài liệu OpenAPI của 4 dịch vụ downstream (`Practice Service`, `Identity Service`, `Content Service`, `AI Engine`) về một giao diện duy nhất trên Gateway thông qua các route YARP `PathRemovePrefix` `/swagger-docs/{service}/{**catch-all}`.
+  - Khi bấm `Authorize` (Bearer JWT) trên `:5212/swagger`, toàn bộ request gửi đi tự động qua `ClaimsHeaderTransform` giải mã JWT và đính kèm `X-User-Id`, `X-User-Role`, `X-Campus-Id` chuẩn xác xuống từng microservice.
+- **Chuẩn Hóa Ánh Xạ JWT Claims & Mở Rộng Định Tuyến Core Flow 4 & 6 ([`GatewayAuthExtensions.cs`](../V-Eval-Gateway.API/Security/GatewayAuthExtensions.cs), [`appsettings.example.json`](../V-Eval-Gateway.API/appsettings.example.json))**:
+  - Đặt `options.MapInboundClaims = false` trên `AddJwtBearer` để giữ nguyên tên claim chuẩn (`sub`, `email`, `exp`, `campus_id`), đảm bảo [`ClaimsHeaderTransform.cs`](../V-Eval-Gateway.API/Security/ClaimsHeaderTransform.cs) trích xuất định danh nhất quán 100% trong khi giữ nguyên cơ chế chống giả mạo `X-User-Id` (`Anti-Header Spoofing`).
+  - Bổ sung route `practice-ai-tutor-v1-route` (`/api/v1/ai-tutor/{**catch-all}`) và tăng `ActivityTimeout = 00:05:00` trên `practice-service-cluster` phục vụ luồng SSE Streaming Socratic Tutor & Core Flow 6.
+  - Đồng bộ cấu hình tập trung tại `Configs/V-Eval-Gateway/appsettings.json` và bổ sung biến môi trường ánh xạ cổng nội bộ container (`:5001`, `:5002`, `:5249`, `:5104`) trên `docker-compose.yml`.
+- **Kiểm Thử & Nghiệm Thu**:
+  - Biên dịch sạch `0 Warning, 0 Error`, `dotnet test` đạt `3/3 Passed (100%)`, `docker compose config` hợp lệ 100%, kiểm thử E2E xuyên suốt Gateway `:5212` -> Practice `:5261` đạt `200 OK` toàn diện.
+
+---
+
 ## [02/11/2026] - Thiết Lập Kiến Trúc Test Nền Tảng Cho GATEWAY SERVICE
 
 - **Chuẩn Hóa Hạ Tầng Dự Án Kiểm Thử (V-Eval-Gateway.Tests)**:
@@ -62,7 +76,7 @@
 
 ## [18/09/2026] - Phát Hành Công Cụ Push Độc Lập `Scripts/push.bat` Cho Gateway Service
 - **Tích Hợp `Scripts/push.bat` Độc Lập**:
-  - Khởi tạo script [`Scripts/push.bat`](file:///e:/CapStone/All%20Services/V-Eval-Gateway/Scripts/push.bat) độc lập cho Gateway.
+  - Khởi tạo script [`Scripts/push.bat`](../Scripts/push.bat) độc lập cho Gateway.
   - Hỗ trợ 3 chế độ Push (nhánh hiện tại, chọn nhánh có sẵn qua menu số, tạo nhánh mới).
   - Tự động kiểm tra đồng bộ lịch sử Git, tự động pull code khi bi cham (behind) và đưa ra **Cảnh báo Đỏ (Red Warning)** ngắt quy trình nếu phát hiện xung đột lịch sử (Conflict/Diverged).
 
@@ -70,8 +84,8 @@
 
 ## [16/09/2026 - 17/09/2026] - Đồng Bộ Cấu Trúc JWT Claims V2 ERD & Thêm Header `X-Campus-Id`
 - **Đồng Bộ JWT Claims với Sơ Đồ V2 ERD (`VACT_SCHEMA_V2_ERD`)**:
-  - Đối chiếu sơ đồ PlantUML V2 ERD và cập nhật DDL trong [`docs/SQL/SQL.sql`](file:///e:/CapStone/docs/SQL/SQL.sql).
-  - Nâng cấp [`ClaimsHeaderTransform.cs`](file:///e:/CapStone/All%20Services/V-Eval-Gateway/V-Eval-Gateway.API/Security/ClaimsHeaderTransform.cs): Bổ sung trích xuất claim `campus_id` và đính kèm vào Header **`X-Campus-Id`** cho các dịch vụ downstream (`Students`, `Teachers`, `AcademicManagers`).
+  - Đối chiếu sơ đồ PlantUML V2 ERD và cập nhật DDL trong `docs/SQL/SQL.sql`.
+  - Nâng cấp [`ClaimsHeaderTransform.cs`](../V-Eval-Gateway.API/Security/ClaimsHeaderTransform.cs): Bổ sung trích xuất claim `campus_id` và đính kèm vào Header **`X-Campus-Id`** cho các dịch vụ downstream (`Students`, `Teachers`, `AcademicManagers`).
   - Kiểm thử biên dịch `dotnet build V-Eval-Gateway.sln` đạt **0 Error(s)**.
 
 ---
@@ -81,7 +95,7 @@
   - Khởi tạo `Dockerfile` cho Gateway (`V-Eval-Gateway.API`) trên cổng `5212`.
 - **Tích Hợp Docker Compose Orchestration (`docker-compose.yml`)**:
   - Định tuyến các container qua mạng nội bộ bridge `veval_network`.
-  - Cấu hình script chạy tự động [`run_docker.bat`](file:///e:/CapStone/Scripts/run_docker/run_docker.bat).
+  - Cấu hình script chạy tự động `Scripts/run_docker/run_docker.bat`.
   - Kiểm thử cú pháp `docker compose config` đạt 100% thành công (Exit Code 0).
 
 ---

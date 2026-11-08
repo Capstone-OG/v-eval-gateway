@@ -76,4 +76,24 @@
 | **Configuration** | `appsettings.example.json`, `Configs/V-Eval-Gateway/appsettings.json` | **ĐẠT (100%)** |
 | **AI Routing** | `appsettings.json`, `appsettings.example.json` | **ĐẠT (100%)** |
 | **Config & Git** | `appsettings.example.json`, `.gitignore` | **ĐẠT (100%)** |
+| **Unified Swagger & Core 6 Routing** | `Program.cs`, `GatewayAuthExtensions.cs`, `appsettings.example.json` | **ĐẠT (100%)** |
+
+---
+
+## 9. [08/11/2026] Architecture Acceptance — Unified Multi-Service Swagger Portal, Claim Fidelity & Core Flow 4/6 Gateway Routing
+- **Architecture Acceptor**: ThinhTran2412 (Lead Reviewer / Architect).
+- **Acceptance Status**: 🟢 **APPROVED / ACCEPTED**.
+- **Target Files**:
+  - [`Program.cs`](../V-Eval-Gateway.API/Program.cs)
+  - [`GatewayAuthExtensions.cs`](../V-Eval-Gateway.API/Security/GatewayAuthExtensions.cs)
+  - [`appsettings.example.json`](../V-Eval-Gateway.API/appsettings.example.json)
+- **Key Architectural Deliverables**:
+  1. **Unified Swagger Aggregator Portal (`/swagger`)**:
+     - Integrated `Swashbuckle.AspNetCore` UI at Gateway `:5212/swagger` coupled with YARP `PathRemovePrefix` pass-through routes (`/swagger-docs/{practice|identity|content|ai-engine}/{**catch-all}`), enabling developers to authenticate once via `Bearer` JWT and invoke Core Flow 6 and sibling microservice endpoints through the true Edge Gateway pipeline.
+  2. **Unmangled JWT Claim Fidelity (`MapInboundClaims = false`) & Anti-Spoofing Preservation**:
+     - Configured `options.MapInboundClaims = false` in `GatewayAuthExtensions.cs` so standard OIDC/JWT claim keys (`sub`, `email`, `exp`, `campus_id`) are preserved verbatim for `ClaimsHeaderTransform` while strictly retaining untrusted client `X-User-*` header stripping.
+  3. **Core Flow 4/6 SSE & Docker Cluster Alignment**:
+     - Added `practice-ai-tutor-v1-route` (`/api/v1/ai-tutor/{**catch-all}`) and extended `practice-service-cluster` `ActivityTimeout` to `00:05:00` for Socratic SSE streams, alongside `ReverseProxy__Clusters__*` container destination overrides in `docker-compose.yml`.
+  4. **Verification**:
+     - Clean .NET 9 build (`0 Warning(s), 0 Error(s)`), `3/3` xUnit tests passed, `docker compose config` validated, and live E2E Gateway -> Practice verification passed (`200 OK` with JWT, `401` on spoofed headers).
 
