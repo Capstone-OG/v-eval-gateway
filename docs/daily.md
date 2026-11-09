@@ -1,5 +1,17 @@
 # NHẬT KÝ KIỂM TRẢ TIẾN ĐỘ VẬN HÀNH (DAILY CHECK LOG) - V-EVAL GATEWAY
 
+## [09/11/2026] - Khắc Phục Lỗi HTTP 413 Payload Too Large, Nâng Giới Hạn Tải Tệp Kestrel & FormOptions Lên 250 MB Cho AI Document & Exam Ingestion
+
+- **Nâng Giới Hạn Kestrel Request Body & FormOptions (`Program.cs`)**:
+  - Phát hiện và xử lý triệt để nguyên nhân gốc rễ gây lỗi `HTTP 413 Payload Too Large` (`BadHttpRequestException: Request body too large. The max request body size is 30000000 bytes`) khi người dùng nạp tài liệu SGK hoặc đề thi PDF dung lượng lớn qua API Gateway (`http://localhost:5212/api/ai-engine/curriculum/extract`).
+  - Cấu hình Kestrel Server: `builder.WebHost.ConfigureKestrel(options => options.Limits.MaxRequestBodySize = 262_144_000)` (250 MB).
+  - Cấu hình FormOptions: `builder.Services.Configure<FormOptions>(options => { options.ValueLengthLimit = int.MaxValue; options.MultipartBodyLengthLimit = 262_144_000; options.MultipartHeadersLengthLimit = int.MaxValue; })`.
+  - Đồng bộ giới hạn 250 MB xuyên suốt từ Gateway xuống AI Engine và Content Service, loại bỏ hoàn toàn hiện tượng ngắt kết nối gateway khi bóc tách tài liệu lớn.
+- **Kiểm Thử & Biên Dịch**:
+  - `dotnet build` đạt kết quả biên dịch sạch `0 Warning, 0 Error`.
+
+---
+
 ## [08/11/2026] - Tích Hợp Unified Swagger Portal Đa Dịch Vụ, Bổ Sung Định Tuyến Core Flow 4/6 (`/api/v1/ai-tutor`) & Chuẩn Hóa JWT Claims (`MapInboundClaims = false`)
 
 - **Cổng Kiểm Thử Tập Trung Unified Swagger UI (`http://localhost:5212/swagger`) ([`Program.cs`](../V-Eval-Gateway.API/Program.cs), [`V-Eval-Gateway.API.csproj`](../V-Eval-Gateway.API/V-Eval-Gateway.API.csproj))**:

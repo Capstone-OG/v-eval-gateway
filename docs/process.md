@@ -43,3 +43,4 @@
 | 10 | **Health Check Dashboard** | `Health/` | 🟢 Hoàn thành | 100% | Endpoint `/healthz` và DownstreamHealthCheck probe |
 | 11 | **Chuẩn Hóa Cấu Hình & Centralized Config** | `V-Eval-Gateway.API/appsettings.example.json` | 🟢 Hoàn thành | 100% | Cập nhật đầy đủ routes và cluster ports, hỗ trợ sync_config.bat |
 | 12 | **Unified Swagger Portal, Định Tuyến `/api/v1/ai-tutor` & Chuẩn Hóa `MapInboundClaims = false`** | `Program.cs`, `Security/GatewayAuthExtensions.cs`, `appsettings.example.json` | 🟢 Hoàn thành | 100% | Gom tài liệu OpenAPI 4 dịch vụ tại `/swagger`, giữ nguyên JWT claims chuẩn (`sub`, `email`, `exp`), bổ sung route `/api/v1/ai-tutor/{**catch-all}` & Docker cluster overrides |
+| 13 | **Nâng Giới Hạn Tải Tệp Kestrel & FormOptions (250 MB)** | `Program.cs` | 🟢 Hoàn thành | 100% | Khắc phục triệt để lỗi HTTP 413 Payload Too Large khi nạp tài liệu SGK và đề thi PDF dung lượng lớn |

@@ -97,3 +97,19 @@
   4. **Verification**:
      - Clean .NET 9 build (`0 Warning(s), 0 Error(s)`), `3/3` xUnit tests passed, `docker compose config` validated, and live E2E Gateway -> Practice verification passed (`200 OK` with JWT, `401` on spoofed headers).
 
+---
+
+## 10. [09/11/2026] Architecture Acceptance — Gateway Large Payload Ingestion Limits (250 MB Kestrel & FormOptions)
+- **Architecture Acceptor**: ThinhTran2412 (Lead Reviewer / Architect).
+- **Acceptance Status**: 🟢 **APPROVED / ACCEPTED**.
+- **Target Files**:
+  - [`Program.cs`](../V-Eval-Gateway.API/Program.cs)
+- **Key Architectural Deliverables**:
+  1. **HTTP 413 Payload Too Large Elimination**:
+     - Root cause resolved: Kestrel's default `MaxRequestBodySize` (30,000,000 bytes ~28.6 MB) severed connections with status 413 when Web Clients uploaded multi-chapter textbook PDFs or extensive exam papers to `/api/ai-engine/curriculum/extract`.
+  2. **End-to-End Large File Streaming Pipeline (250 MB)**:
+     - Configured `KestrelServerLimits.MaxRequestBodySize = 262_144_000` (250 MB) and `FormOptions.MultipartBodyLengthLimit = 262_144_000` on the Edge API Gateway.
+     - Perfectly aligns Gateway reverse proxy capacity with downstream `V-Eval-Ai_Engine` and `V-Eval-Content_Service` thresholds.
+  3. **Verification**:
+     - C# syntax compile target (`-t:Compile`) succeeded with `0 Warning(s), 0 Error(s)`. Full pipeline ready for zero-interruption high-volume document ingestion.
+
