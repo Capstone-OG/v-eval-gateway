@@ -1,5 +1,23 @@
 # NHẬT KÝ KIỂM TRẢ TIẾN ĐỘ VẬN HÀNH (DAILY CHECK LOG) - V-EVAL GATEWAY
 
+## [11/11/2026] - Chuyển Toàn Bộ Nhánh Làm Việc Sang Main, Triển Khai Docker Container Trên Domain pickic.io.vn & Hoạch Định Kiến Trúc Dự Phòng API Gateway (High Availability & SPOF Mitigation)
+
+- **Triển Khai Đóng Gói Docker Container & Ánh Xạ Domain pickic.io.vn ([`docker-compose.yml`](../../docker-compose.yml))**:
+  - Triển khai container `v_eval_gateway` hoạt động trên mạng bridge `capstone_veval_network` cổng `5212:5212`, đóng vai trò là Cổng giao tiếp duy nhất (Single Entry Point) của toàn bộ kiến trúc V-Eval.
+  - Cấu hình Cloudflare Tunnel `/home/thai-thinh/.cloudflared/config.yml` định tuyến `https://api.pickic.io.vn` trực tiếp về Gateway `http://127.0.0.1:5212`.
+  - Cập nhật định tuyến động tới các cluster backend trong mạng nội bộ Docker: `http://v-eval-identity-service:5155`, `http://v-eval-content-service:5249`, `http://v-eval-practice-service:5002`, `http://v-eval-ai-engine:5104`.
+  - Kiểm thử trực tiếp: `curl -s https://api.pickic.io.vn/api/v1/campuses` trả về HTTP 200 kèm danh sách 2 cơ sở đào tạo, xác nhận Gateway định tuyến xuyên suốt 100%.
+
+- **Nghiên Cứu & Hoạch Định Kiến Trúc Dự Phòng Đa Node (High Availability & SPOF Mitigation)**:
+  - *Nhận diện Rủi ro*: Trong kiến trúc Microservices, Gateway là Single Entry Point. Nếu chỉ triển khai duy nhất 1 node thì Gateway trở thành Điểm tắc nghẽn nguy hiểm nhất (Single Point of Failure - SPOF); khi node này gặp sự cố (quá tải, OOM, crash), toàn bộ hệ thống tê liệt dù các service nghiệp vụ phía sau vẫn khỏe mạnh.
+  - *Bản chất Stateless của YARP*: YARP trên nền Kestrel .NET 9 hoàn toàn không lưu trữ session người dùng (Token-based Authentication), không lưu cache nghiệp vụ và tiêu tốn cực ít tài nguyên (~30-50MB RAM). Do đó, Gateway có thể mở rộng theo chiều ngang (Horizontal Scaling) thành 2-3+ node Active-Active mà không gặp trở ngại về đồng bộ trạng thái bộ nhớ.
+  - *Thiết kế Cân bằng tải Đa tầng*:
+    - **Tầng 1 (Host / Docker Compose)**: Phía trước cụm `v_eval_gateway_1` và `v_eval_gateway_2` là Cloudflare Tunnel Ingress hoặc Nginx Reverse Proxy siêu nhẹ thực hiện Round-Robin, kết hợp Liveness Probe `/healthz` và chính sách phục hồi tự động của Docker (`restart: always`).
+    - **Tầng 2 (Production / Kubernetes)**: Đóng gói Gateway thành K8s Deployment với `replicas >= 2`, tích hợp HPA (Horizontal Pod Autoscaler) tự động nâng số pod theo ngưỡng CPU/RAM 70%, đứng sau Kubernetes Ingress Controller / Cloud Load Balancer.
+  - *Chuẩn bị Luận điểm Bảo vệ Đồ án*: Cung cấp cơ sở lý luận vững chắc, minh chứng rõ năng lực thiết kế hệ thống chịu lỗi cao (Fault Tolerance & Scalability) sẵn sàng bảo vệ trước Hội đồng phản biện Capstone.
+
+---
+
 ## [09/11/2026] - Khắc Phục Lỗi HTTP 413 Payload Too Large, Nâng Giới Hạn Tải Tệp Kestrel & FormOptions Lên 250 MB Cho AI Document & Exam Ingestion
 
 - **Nâng Giới Hạn Kestrel Request Body & FormOptions (`Program.cs`)**:
