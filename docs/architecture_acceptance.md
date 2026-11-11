@@ -139,3 +139,22 @@
   - Live Docker deployment validated with `curl -s https://api.pickic.io.vn/api/v1/campuses` returning 200 OK.
   - Architectural justification prepared for Capstone defense committee inquiries regarding microservice resilience, fault tolerance, and horizontal scalability.
 
+---
+
+## 12. [11/11/2026] Architecture Acceptance — PayOS IPN Webhook Reverse Proxy Routing & Containerized AI RAG Cluster Bridging
+- **Architecture Acceptor**: ThinhTran2412 (Lead Architect & System Engineer).
+- **Acceptance Status**: 🟢 **APPROVED / ARCHITECTURALLY VERIFIED**.
+- **Context & Problem Statement**:
+  - External payment provider PayOS triggers IPN webhook events to the canonical root endpoint `/api/payments/payos-webhook`. The API Gateway previously had no route capturing `/api/payments/**`, returning HTTP 404 to the payment gateway.
+  - Furthermore, calls to the AI diagnostic examination generator `/api/v1/diagnostic/**` failed with HTTP 502 Bad Gateway due to `Connection refused` pointing to unmapped `localhost:8000` rather than the Docker service name.
+- **Architectural Deliverables**:
+  1. **Canonical PayOS Webhook YARP Route**:
+     - Introduced `practice-payments-route` (`Match: { Path: "/api/payments/{**catch-all}" }`) mapped to `practice-service-cluster`.
+     - Preserves complete payload integrity, Content-Type headers, and signature verification parameters across reverse proxy boundaries.
+  2. **Internal Docker DNS Cluster Destination for AI RAG**:
+     - Configured container destination override `ReverseProxy__Clusters__ai-rag-cluster__Destinations__destination1__Address=http://v-eval-ai-rag:8000`.
+     - Ensures seamless inter-container HTTP traffic routing within the private Docker bridge network (`capstone_veval_network`).
+- **Verification**:
+  - `POST http://localhost:5212/api/payments/payos-webhook` dispatched through Gateway returns HTTP 200/400 validation payload from `Practice Service` (signature verification active, 0 HTTP 404).
+  - All Gateway routes compiled and validated under .NET 9 SDK with `0 Error(s)`.
+

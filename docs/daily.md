@@ -8,6 +8,16 @@
   - Cập nhật định tuyến động tới các cluster backend trong mạng nội bộ Docker: `http://v-eval-identity-service:5155`, `http://v-eval-content-service:5249`, `http://v-eval-practice-service:5002`, `http://v-eval-ai-engine:5104`.
   - Kiểm thử trực tiếp: `curl -s https://api.pickic.io.vn/api/v1/campuses` trả về HTTP 200 kèm danh sách 2 cơ sở đào tạo, xác nhận Gateway định tuyến xuyên suốt 100%.
 
+- **Định Tuyến PayOS Webhook & Cụm Dịch Vụ AI Python RAG Nội Bộ ([`appsettings.example.json`](../V-Eval-Gateway.API/appsettings.example.json), [`docker-compose.yml`](../../docker-compose.yml))**:
+  - **Bổ sung định tuyến PayOS Webhook (`practice-payments-route`)**:
+    - Khắc phục lỗi `HTTP 404 Not Found` khi cổng thanh toán PayOS gửi thông báo IPN thanh toán khóa học/lượt thi vào endpoint `/api/payments/payos-webhook`.
+    - Bổ sung cấu hình route YARP ánh xạ pattern `/api/payments/{**catch-all}` trực tiếp sang cụm `practice-service-cluster`.
+  - **Ánh xạ cụm Python FastAPI RAG trong mạng Docker (`ai-rag-cluster`)**:
+    - Thiết lập biến môi trường cấu hình động YARP `ReverseProxy__Clusters__ai-rag-cluster__Destinations__destination1__Address=http://v-eval-ai-rag:8000` trên container `v-eval-gateway`.
+    - Xóa sạch lỗi `HTTP 502 Bad Gateway (Connection refused localhost:8000)` khi các yêu cầu `/api/v1/diagnostic/{**catch-all}` được gửi qua Gateway.
+  - **Kiểm thử trực tiếp**:
+    - `curl -s -X POST http://localhost:5212/api/payments/payos-webhook -d '{"test":true}'` trả về `{"success":false,"message":"Invalid signature"}` (xác nhận request đã đi xuyên suốt qua Gateway tới Practice Service thành công).
+
 - **Nghiên Cứu & Hoạch Định Kiến Trúc Dự Phòng Đa Node (High Availability & SPOF Mitigation)**:
   - *Nhận diện Rủi ro*: Trong kiến trúc Microservices, Gateway là Single Entry Point. Nếu chỉ triển khai duy nhất 1 node thì Gateway trở thành Điểm tắc nghẽn nguy hiểm nhất (Single Point of Failure - SPOF); khi node này gặp sự cố (quá tải, OOM, crash), toàn bộ hệ thống tê liệt dù các service nghiệp vụ phía sau vẫn khỏe mạnh.
   - *Bản chất Stateless của YARP*: YARP trên nền Kestrel .NET 9 hoàn toàn không lưu trữ session người dùng (Token-based Authentication), không lưu cache nghiệp vụ và tiêu tốn cực ít tài nguyên (~30-50MB RAM). Do đó, Gateway có thể mở rộng theo chiều ngang (Horizontal Scaling) thành 2-3+ node Active-Active mà không gặp trở ngại về đồng bộ trạng thái bộ nhớ.
