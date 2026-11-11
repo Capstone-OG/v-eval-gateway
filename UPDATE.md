@@ -1,20 +1,12 @@
-# Nhật Ký Cập Nhật - V-Eval Gateway Service
+# NHẬT KÝ CẬP NHẬT (UPDATE LOG) - GATEWAY SERVICE
 
-## [16/09/2026 - 17/09/2026] - Đồng Bộ Cấu Trúc JWT Claims V2 ERD & Thêm Header `X-Campus-Id`
-- **Nâng Cấp Security Claims Transformer (`ClaimsHeaderTransform.cs`)**:
-  - Bổ sung trích xuất claim `campus_id` từ JWT Token và đính kèm vào Header **`X-Campus-Id`** gửi xuống downstream microservices (`Students`, `Teachers`, `AcademicManagers`).
-  - Đồng bộ trọn bộ X-Headers: `X-User-Id`, `X-User-Role`, `X-User-Email`, `X-Campus-Id`, `X-Token-Expires-At`, `X-Token-Remaining-Seconds`, và `X-Token-Refresh-Required`.
-- **Đồng Bộ Tài Liệu Kiến Trúc & Nhật Ký Tiến Độ**:
-  - Cập nhật [`docs/daily_check_log.md`](file:///e:/CapStone/All%20Services/V-Eval-Gateway/docs/daily_check_log.md) và [`docs/nghiem_thu_va_thau_hieu_kien_truc.md`](file:///e:/CapStone/All%20Services/V-Eval-Gateway/docs/nghiem_thu_va_thau_hieu_kien_truc.md).
-- **Kiểm Thử Biên Dịch**: `dotnet build V-Eval-Gateway.sln` đạt **100% Succeeded (0 Error, 0 Warning)**.
+## [08/11/2026] - Tích Hợp Unified Swagger Portal Đa Dịch Vụ, Bổ Sung Định Tuyến `/api/v1/ai-tutor` & Chuẩn Hóa JWT Claims (`MapInboundClaims = false`)
 
-## [15/09/2026] - Dockerize Gateway & Chuẩn Hóa Docker Compose Multi-Stage Build
-- **Dockerfile Multi-Stage .NET 9**:
-  - Khởi tạo `Dockerfile` chuẩn cho Gateway (`V-Eval-Gateway.API`) với cổng `5212`.
-- **Tích Hợp Docker Compose Orchestration (`docker-compose.yml`)**:
-  - Định tuyến các container qua mạng nội bộ bridge `veval_network`.
-
-## [14/09/2026] - Chuyển Đổi sang Kiến Trúc Modular Feature Folders, Security Claims Transformer & Production Config
-- **Tái Cấu Trúc Kiến Trúc**:
-  - Gỡ bỏ 3 tầng dự án Clean Architecture dư thừa (`Domain`, `Application`, `Infrastructure`).
-  - Đưa `V-Eval-Gateway.API` về mô hình **Feature Folders / Modular Architecture**.
+- **Cổng Kiểm Thử Tập Trung Unified Swagger UI (`http://localhost:5212/swagger`) ([`Program.cs`](./V-Eval-Gateway.API/Program.cs), [`V-Eval-Gateway.API.csproj`](./V-Eval-Gateway.API/V-Eval-Gateway.API.csproj))**:
+  - Tích hợp `Swashbuckle.AspNetCore 7.3.1` và cấu hình `UseSwaggerUI` tổng hợp tài liệu OpenAPI của `Practice Service`, `Identity Service`, `Content Service` và `AI Engine` qua các route YARP `/swagger-docs/{service}/{**catch-all}`.
+  - Hỗ trợ đính kèm `Bearer` JWT một lần tại `:5212/swagger` để Gateway tự động xác thực và truyền `X-User-Id`, `X-User-Role`, `X-Campus-Id` xuống toàn bộ dịch vụ phía sau.
+- **Chuẩn Hóa JWT Claims & Định Tuyến Core Flow 4 / 6 ([`GatewayAuthExtensions.cs`](./V-Eval-Gateway.API/Security/GatewayAuthExtensions.cs), [`appsettings.example.json`](./V-Eval-Gateway.API/appsettings.example.json))**:
+  - Bật `options.MapInboundClaims = false` trong `AddJwtBearer` giữ nguyên các claim chuẩn (`sub`, `email`, `exp`, `campus_id`) cho [`ClaimsHeaderTransform.cs`](./V-Eval-Gateway.API/Security/ClaimsHeaderTransform.cs) đồng thời bảo toàn tuyệt đối lớp chắn `Anti-Header Spoofing`.
+  - Bổ sung route `practice-ai-tutor-v1-route` (`/api/v1/ai-tutor/{**catch-all}`), tăng `ActivityTimeout = 00:05:00` cho `practice-service-cluster` và đồng bộ cấu hình sang `Configs/V-Eval-Gateway/appsettings.json` cùng `docker-compose.yml`.
+- **Kiểm Thử & Vận Hành**:
+  - `dotnet build` đạt `0 Warning, 0 Error`; `dotnet test` đạt `3/3 Passed (100%)`; `docker compose config` hợp lệ 100%; kiểm thử HTTP E2E qua Gateway `:5212` đạt `200 OK` toàn diện.
