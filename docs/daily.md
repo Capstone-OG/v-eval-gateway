@@ -1,5 +1,13 @@
 # NHẬT KÝ KIỂM TRẢ TIẾN ĐỘ VẬN HÀNH (DAILY CHECK LOG) - V-EVAL GATEWAY
 
+## [13/11/2026] - Bổ Sung Định Tuyến YARP Cho Gia Sư Socratic & Academic Graph Về Cụm AI RAG (`:8000`)
+
+- **Bổ Sung Định Tuyến Socratic & Academic Graph ([`appsettings.json`](../V-Eval-Gateway.API/appsettings.json), [`appsettings.example.json`](../V-Eval-Gateway.API/appsettings.example.json))**:
+  - Thêm `ai-rag-socratic-route` (`/api/socratic/{**catch-all}`), `ai-rag-socratic-v1-route` (`/api/v1/socratic/{**catch-all}`) và `ai-rag-academic-graph-v1-route` (`/api/v1/academic-graph/{**catch-all}`) trỏ trực tiếp sang `ai-rag-cluster` (`http://v-eval-ai-rag:8000` trong Docker / `http://localhost:8000` ở local).
+  - Đồng bộ hoàn toàn với `Configs/V-Eval-Gateway/appsettings.json`.
+
+---
+
 ## [11/11/2026] - Chuyển Toàn Bộ Nhánh Làm Việc Sang Main, Triển Khai Docker Container Trên Domain pickic.io.vn & Hoạch Định Kiến Trúc Dự Phòng API Gateway (High Availability & SPOF Mitigation)
 
 - **Triển Khai Đóng Gói Docker Container & Ánh Xạ Domain pickic.io.vn ([`docker-compose.yml`](../../docker-compose.yml))**:

@@ -158,3 +158,12 @@
   - `POST http://localhost:5212/api/payments/payos-webhook` dispatched through Gateway returns HTTP 200/400 validation payload from `Practice Service` (signature verification active, 0 HTTP 404).
   - All Gateway routes compiled and validated under .NET 9 SDK with `0 Error(s)`.
 
+---
+
+## 13. [13/11/2026] Architecture Acceptance — Socratic Tutor & Academic Graph YARP Routes to `ai-rag-cluster`
+- **Acceptance Status**: 🟢 **APPROVED / ACCEPTED**.
+- **Target Files**: [`appsettings.json`](../V-Eval-Gateway.API/appsettings.json), [`appsettings.example.json`](../V-Eval-Gateway.API/appsettings.example.json).
+- **Deliverables**:
+  - Added `ai-rag-socratic-route` (`/api/socratic/{**catch-all}`), `ai-rag-socratic-v1-route` (`/api/v1/socratic/{**catch-all}`), and `ai-rag-academic-graph-v1-route` (`/api/v1/academic-graph/{**catch-all}`) mapped to `ai-rag-cluster` (`http://v-eval-ai-rag:8000` in Docker / `http://localhost:8000` locally).
+
+

@@ -5,11 +5,7 @@ obj/
 .idea/
 *.user
 *.suo
-
-# Ignore sensitive appsettings configuration files in production
-**/appsettings.json
-**/appsettings.*.json
-!**/appsettings.example.json
+**/*.bak
 
 # Test results and Coverage reports
 TestResults/
