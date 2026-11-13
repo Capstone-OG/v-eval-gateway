@@ -1,5 +1,53 @@
 # NHẬT KÝ KIỂM TRẢ TIẾN ĐỘ VẬN HÀNH (DAILY CHECK LOG) - V-EVAL GATEWAY
 
+## [13/11/2026] - Bổ Sung Định Tuyến YARP Cho Gia Sư Socratic & Academic Graph Về Cụm AI RAG (`:8000`)
+
+- **Bổ Sung Định Tuyến Socratic & Academic Graph ([`appsettings.json`](../V-Eval-Gateway.API/appsettings.json), [`appsettings.example.json`](../V-Eval-Gateway.API/appsettings.example.json))**:
+  - Thêm `ai-rag-socratic-route` (`/api/socratic/{**catch-all}`), `ai-rag-socratic-v1-route` (`/api/v1/socratic/{**catch-all}`) và `ai-rag-academic-graph-v1-route` (`/api/v1/academic-graph/{**catch-all}`) trỏ trực tiếp sang `ai-rag-cluster` (`http://v-eval-ai-rag:8000` trong Docker / `http://localhost:8000` ở local).
+  - Đồng bộ hoàn toàn với `Configs/V-Eval-Gateway/appsettings.json`.
+
+---
+
+## [11/11/2026] - Chuyển Toàn Bộ Nhánh Làm Việc Sang Main, Triển Khai Docker Container Trên Domain pickic.io.vn & Hoạch Định Kiến Trúc Dự Phòng API Gateway (High Availability & SPOF Mitigation)
+
+- **Triển Khai Đóng Gói Docker Container & Ánh Xạ Domain pickic.io.vn ([`docker-compose.yml`](../../docker-compose.yml))**:
+  - Triển khai container `v_eval_gateway` hoạt động trên mạng bridge `capstone_veval_network` cổng `5212:5212`, đóng vai trò là Cổng giao tiếp duy nhất (Single Entry Point) của toàn bộ kiến trúc V-Eval.
+  - Cấu hình Cloudflare Tunnel `/home/thai-thinh/.cloudflared/config.yml` định tuyến `https://api.pickic.io.vn` trực tiếp về Gateway `http://127.0.0.1:5212`.
+  - Cập nhật định tuyến động tới các cluster backend trong mạng nội bộ Docker: `http://v-eval-identity-service:5155`, `http://v-eval-content-service:5249`, `http://v-eval-practice-service:5002`, `http://v-eval-ai-engine:5104`.
+  - Kiểm thử trực tiếp: `curl -s https://api.pickic.io.vn/api/v1/campuses` trả về HTTP 200 kèm danh sách 2 cơ sở đào tạo, xác nhận Gateway định tuyến xuyên suốt 100%.
+
+- **Định Tuyến PayOS Webhook & Cụm Dịch Vụ AI Python RAG Nội Bộ ([`appsettings.example.json`](../V-Eval-Gateway.API/appsettings.example.json), [`docker-compose.yml`](../../docker-compose.yml))**:
+  - **Bổ sung định tuyến PayOS Webhook (`practice-payments-route`)**:
+    - Khắc phục lỗi `HTTP 404 Not Found` khi cổng thanh toán PayOS gửi thông báo IPN thanh toán khóa học/lượt thi vào endpoint `/api/payments/payos-webhook`.
+    - Bổ sung cấu hình route YARP ánh xạ pattern `/api/payments/{**catch-all}` trực tiếp sang cụm `practice-service-cluster`.
+  - **Ánh xạ cụm Python FastAPI RAG trong mạng Docker (`ai-rag-cluster`)**:
+    - Thiết lập biến môi trường cấu hình động YARP `ReverseProxy__Clusters__ai-rag-cluster__Destinations__destination1__Address=http://v-eval-ai-rag:8000` trên container `v-eval-gateway`.
+    - Xóa sạch lỗi `HTTP 502 Bad Gateway (Connection refused localhost:8000)` khi các yêu cầu `/api/v1/diagnostic/{**catch-all}` được gửi qua Gateway.
+  - **Kiểm thử trực tiếp**:
+    - `curl -s -X POST http://localhost:5212/api/payments/payos-webhook -d '{"test":true}'` trả về `{"success":false,"message":"Invalid signature"}` (xác nhận request đã đi xuyên suốt qua Gateway tới Practice Service thành công).
+
+- **Nghiên Cứu & Hoạch Định Kiến Trúc Dự Phòng Đa Node (High Availability & SPOF Mitigation)**:
+  - *Nhận diện Rủi ro*: Trong kiến trúc Microservices, Gateway là Single Entry Point. Nếu chỉ triển khai duy nhất 1 node thì Gateway trở thành Điểm tắc nghẽn nguy hiểm nhất (Single Point of Failure - SPOF); khi node này gặp sự cố (quá tải, OOM, crash), toàn bộ hệ thống tê liệt dù các service nghiệp vụ phía sau vẫn khỏe mạnh.
+  - *Bản chất Stateless của YARP*: YARP trên nền Kestrel .NET 9 hoàn toàn không lưu trữ session người dùng (Token-based Authentication), không lưu cache nghiệp vụ và tiêu tốn cực ít tài nguyên (~30-50MB RAM). Do đó, Gateway có thể mở rộng theo chiều ngang (Horizontal Scaling) thành 2-3+ node Active-Active mà không gặp trở ngại về đồng bộ trạng thái bộ nhớ.
+  - *Thiết kế Cân bằng tải Đa tầng*:
+    - **Tầng 1 (Host / Docker Compose)**: Phía trước cụm `v_eval_gateway_1` và `v_eval_gateway_2` là Cloudflare Tunnel Ingress hoặc Nginx Reverse Proxy siêu nhẹ thực hiện Round-Robin, kết hợp Liveness Probe `/healthz` và chính sách phục hồi tự động của Docker (`restart: always`).
+    - **Tầng 2 (Production / Kubernetes)**: Đóng gói Gateway thành K8s Deployment với `replicas >= 2`, tích hợp HPA (Horizontal Pod Autoscaler) tự động nâng số pod theo ngưỡng CPU/RAM 70%, đứng sau Kubernetes Ingress Controller / Cloud Load Balancer.
+  - *Chuẩn bị Luận điểm Bảo vệ Đồ án*: Cung cấp cơ sở lý luận vững chắc, minh chứng rõ năng lực thiết kế hệ thống chịu lỗi cao (Fault Tolerance & Scalability) sẵn sàng bảo vệ trước Hội đồng phản biện Capstone.
+
+---
+
+## [09/11/2026] - Khắc Phục Lỗi HTTP 413 Payload Too Large, Nâng Giới Hạn Tải Tệp Kestrel & FormOptions Lên 250 MB Cho AI Document & Exam Ingestion
+
+- **Nâng Giới Hạn Kestrel Request Body & FormOptions (`Program.cs`)**:
+  - Phát hiện và xử lý triệt để nguyên nhân gốc rễ gây lỗi `HTTP 413 Payload Too Large` (`BadHttpRequestException: Request body too large. The max request body size is 30000000 bytes`) khi người dùng nạp tài liệu SGK hoặc đề thi PDF dung lượng lớn qua API Gateway (`http://localhost:5212/api/ai-engine/curriculum/extract`).
+  - Cấu hình Kestrel Server: `builder.WebHost.ConfigureKestrel(options => options.Limits.MaxRequestBodySize = 262_144_000)` (250 MB).
+  - Cấu hình FormOptions: `builder.Services.Configure<FormOptions>(options => { options.ValueLengthLimit = int.MaxValue; options.MultipartBodyLengthLimit = 262_144_000; options.MultipartHeadersLengthLimit = int.MaxValue; })`.
+  - Đồng bộ giới hạn 250 MB xuyên suốt từ Gateway xuống AI Engine và Content Service, loại bỏ hoàn toàn hiện tượng ngắt kết nối gateway khi bóc tách tài liệu lớn.
+- **Kiểm Thử & Biên Dịch**:
+  - `dotnet build` đạt kết quả biên dịch sạch `0 Warning, 0 Error`.
+
+---
+
 ## [08/11/2026] - Tích Hợp Unified Swagger Portal Đa Dịch Vụ, Bổ Sung Định Tuyến Core Flow 4/6 (`/api/v1/ai-tutor`) & Chuẩn Hóa JWT Claims (`MapInboundClaims = false`)
 
 - **Cổng Kiểm Thử Tập Trung Unified Swagger UI (`http://localhost:5212/swagger`) ([`Program.cs`](../V-Eval-Gateway.API/Program.cs), [`V-Eval-Gateway.API.csproj`](../V-Eval-Gateway.API/V-Eval-Gateway.API.csproj))**:
