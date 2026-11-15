@@ -1,5 +1,13 @@
 # NHẬT KÝ KIỂM TRẢ TIẾN ĐỘ VẬN HÀNH (DAILY CHECK LOG) - V-EVAL GATEWAY
 
+## [15/11/2026] - Bổ Sung Định Tuyến YARP Cho 4 Thực Thể Học Kỳ (`/api/v1/academic-terms`), Khóa Học (`/api/v1/courses`), Lớp Học (`/api/v1/classes`) & Lịch Học (`/api/v1/schedules`) Về Cụm Practice Service
+
+- **Bổ Sung 4 Routes YARP Tách Biệt Theo Từng Aggregate Root ([`appsettings.json`](../V-Eval-Gateway.API/appsettings.json), [`appsettings.example.json`](../V-Eval-Gateway.API/appsettings.example.json))**:
+  - Thêm `practice-academic-terms-v1-route` (`/api/v1/academic-terms/{**catch-all}`), `practice-courses-v1-route` (`/api/v1/courses/{**catch-all}`), `practice-classes-v1-route` (`/api/v1/classes/{**catch-all}`) và `practice-schedules-v1-route` (`/api/v1/schedules/{**catch-all}`) trỏ trực tiếp sang `practice-service-cluster` (`http://v-eval-practice-service:5002` trong Docker / `http://localhost:5261` ở local).
+  - Đảm bảo toàn bộ các endpoints thuộc 4 Controllers chuyên biệt (`AcademicTermsController`, `CoursesController`, `ClassesController`, `SchedulesController`) đều đi qua tầng xác thực JWT và `ClaimsHeaderTransform` của Gateway.
+
+---
+
 ## [13/11/2026] - Bổ Sung Định Tuyến YARP Cho Gia Sư Socratic & Academic Graph Về Cụm AI RAG (`:8000`)
 
 - **Bổ Sung Định Tuyến Socratic & Academic Graph ([`appsettings.json`](../V-Eval-Gateway.API/appsettings.json), [`appsettings.example.json`](../V-Eval-Gateway.API/appsettings.example.json))**:
