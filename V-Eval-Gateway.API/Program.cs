@@ -1,6 +1,20 @@
+using Microsoft.AspNetCore.Http.Features;
 using V_Eval_Gateway.API.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// 0. Cấu hình Kestrel & FormOptions cho phép chuyển tiếp tệp SGK / Đề thi lớn (lên tới 250 MB)
+builder.WebHost.ConfigureKestrel(options =>
+{
+    options.Limits.MaxRequestBodySize = 262_144_000; // 250 MB
+});
+
+builder.Services.Configure<FormOptions>(options =>
+{
+    options.ValueLengthLimit = int.MaxValue;
+    options.MultipartBodyLengthLimit = 262_144_000; // 250 MB
+    options.MultipartHeadersLengthLimit = int.MaxValue;
+});
 
 // 1. Add All Gateway Services (CORS, YARP, Transforms, RateLimiting, Auth, HealthChecks)
 builder.Services.AddGatewayServices(builder.Configuration);
