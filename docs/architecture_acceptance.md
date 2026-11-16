@@ -167,3 +167,10 @@
   - Added `ai-rag-socratic-route` (`/api/socratic/{**catch-all}`), `ai-rag-socratic-v1-route` (`/api/v1/socratic/{**catch-all}`), and `ai-rag-academic-graph-v1-route` (`/api/v1/academic-graph/{**catch-all}`) mapped to `ai-rag-cluster` (`http://v-eval-ai-rag:8000` in Docker / `http://localhost:8000` locally).
 
 
+---
+
+## 14. [15/11/2026] Architecture Acceptance — Enterprise Aggregate Root YARP Routes (`/api/v1/academic-terms`, `/api/v1/courses`, `/api/v1/classes`, `/api/v1/schedules`)
+- **Acceptance Status**: 🟢 **APPROVED / ACCEPTED**.
+- **Target Files**: [`appsettings.json`](../V-Eval-Gateway.API/appsettings.json), [`appsettings.example.json`](../V-Eval-Gateway.API/appsettings.example.json).
+- **Deliverables**:
+  - Added `practice-academic-terms-v1-route` (`/api/v1/academic-terms/{**catch-all}`), `practice-courses-v1-route` (`/api/v1/courses/{**catch-all}`), `practice-classes-v1-route` (`/api/v1/classes/{**catch-all}`), and `practice-schedules-v1-route` (`/api/v1/schedules/{**catch-all}`) mapped to `practice-service-cluster`, aligning Gateway reverse proxy routing with separated Aggregate Root controllers.

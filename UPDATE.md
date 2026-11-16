@@ -1,9 +1,10 @@
 # NHẬT KÝ CẬP NHẬT (UPDATE LOG) - GATEWAY SERVICE
 
-## [13/11/2026] - Bổ Sung Định Tuyến YARP Cho Gia Sư Socratic & Academic Graph Về Cụm AI RAG (`:8000`)
+## [15/11/2026] - Bổ Sung Định Tuyến YARP Cho 4 Thực Thể Học Kỳ (`/api/v1/academic-terms`), Khóa Học (`/api/v1/courses`), Lớp Học (`/api/v1/classes`) & Lịch Học (`/api/v1/schedules`) Về Cụm Practice Service
 
-- **Bổ Sung Định Tuyến Socratic & Academic Graph ([`appsettings.json`](./V-Eval-Gateway.API/appsettings.json), [`appsettings.example.json`](./V-Eval-Gateway.API/appsettings.example.json))**:
-  - Thêm `ai-rag-socratic-route` (`/api/socratic/{**catch-all}`) -> `ai-rag-cluster`.
-  - Thêm `ai-rag-socratic-v1-route` (`/api/v1/socratic/{**catch-all}`) -> `ai-rag-cluster`.
-  - Thêm `ai-rag-academic-graph-v1-route` (`/api/v1/academic-graph/{**catch-all}`) -> `ai-rag-cluster`.
-  - Đồng bộ với cấu hình `Configs/V-Eval-Gateway/appsettings.json` của `System-Repo`.
+- **Bổ Sung 4 Routes YARP Tách Biệt Theo Từng Aggregate Root ([`appsettings.json`](./V-Eval-Gateway.API/appsettings.json), [`appsettings.example.json`](./V-Eval-Gateway.API/appsettings.example.json))**:
+  - `practice-academic-terms-v1-route`: `/api/v1/academic-terms/{**catch-all}` -> `practice-service-cluster`.
+  - `practice-courses-v1-route`: `/api/v1/courses/{**catch-all}` -> `practice-service-cluster`.
+  - `practice-classes-v1-route`: `/api/v1/classes/{**catch-all}` -> `practice-service-cluster`.
+  - `practice-schedules-v1-route`: `/api/v1/schedules/{**catch-all}` -> `practice-service-cluster`.
+  - Đảm bảo từng Aggregate Root (`AcademicTerm`, `Course`, `Class`, `Schedule/Session/Attendance`) có định tuyến RESTful độc lập chuẩn doanh nghiệp qua cổng API Gateway.
