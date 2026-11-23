@@ -1,10 +1,9 @@
-# NHẬT KÝ CẬP NHẬT (UPDATE LOG) - GATEWAY SERVICE
+# UPDATE — V-Eval-Gateway
 
-## [15/11/2026] - Bổ Sung Định Tuyến YARP Cho 4 Thực Thể Học Kỳ (`/api/v1/academic-terms`), Khóa Học (`/api/v1/courses`), Lớp Học (`/api/v1/classes`) & Lịch Học (`/api/v1/schedules`) Về Cụm Practice Service
-
-- **Bổ Sung 4 Routes YARP Tách Biệt Theo Từng Aggregate Root ([`appsettings.json`](./V-Eval-Gateway.API/appsettings.json), [`appsettings.example.json`](./V-Eval-Gateway.API/appsettings.example.json))**:
-  - `practice-academic-terms-v1-route`: `/api/v1/academic-terms/{**catch-all}` -> `practice-service-cluster`.
-  - `practice-courses-v1-route`: `/api/v1/courses/{**catch-all}` -> `practice-service-cluster`.
-  - `practice-classes-v1-route`: `/api/v1/classes/{**catch-all}` -> `practice-service-cluster`.
-  - `practice-schedules-v1-route`: `/api/v1/schedules/{**catch-all}` -> `practice-service-cluster`.
-  - Đảm bảo từng Aggregate Root (`AcademicTerm`, `Course`, `Class`, `Schedule/Session/Attendance`) có định tuyến RESTful độc lập chuẩn doanh nghiệp qua cổng API Gateway.
+## [23/11/2026]
+- **Tích Hợp Continuous Deployment (Auto-CD) Lên Máy Chủ Ubuntu Docker Server (`veval.io.vn`)**:
+  - Bổ sung file workflow [`.github/workflows/cd-main.yml`](./.github/workflows/cd-main.yml) kích hoạt tự động mỗi khi có Pull Request được merge vào nhánh `main`.
+  - Cấu hình 2 job tuần tự:
+    1. **`ci-verify` (`runs-on: ubuntu-latest`)**: Chạy kiểm tra lint, build và automated tests trên hạ tầng GitHub Cloud.
+    2. **`deploy-ubuntu` (`runs-on: [self-hosted, veval-prod]`)**: Gọi script `/data/Capstone/Scripts/deploy_service.sh gateway` trên máy chủ Ubuntu production.
+  - Áp dụng cơ chế selective rebuild (`--no-deps`), đồng bộ Git hard reset nhánh `main` và bảo toàn kết nối Zero-Downtime của Cloudflare Tunnel.
