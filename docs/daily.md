@@ -8,6 +8,12 @@
 
 ---
 
+## [23/11/2026]
+- **Tích Hợp Continuous Deployment (Auto-CD) Lên Máy Chủ Ubuntu Docker Server (`veval.io.vn`)**:
+  - Bổ sung file workflow [`.github/workflows/cd-main.yml`](../.github/workflows/cd-main.yml) kích hoạt tự động mỗi khi merge PR vào nhánh `main`.
+  - Thiết lập 2 stage: `ci-verify` (GitHub Cloud Runner) và `deploy-ubuntu` (Self-Hosted Runner mang nhãn `[self-hosted, veval-prod]`) gọi `/data/Capstone/Scripts/deploy_service.sh gateway`.
+  - Vận hành cơ chế rebuild độc lập (`--no-deps`), đảm bảo Zero-Downtime, bảo vệ `veval-tunnel` và tự động thu hồi tài nguyên với `docker image prune -f`.
+
 ## [13/11/2026] - Bổ Sung Định Tuyến YARP Cho Gia Sư Socratic & Academic Graph Về Cụm AI RAG (`:8000`)
 
 - **Bổ Sung Định Tuyến Socratic & Academic Graph ([`appsettings.json`](../V-Eval-Gateway.API/appsettings.json), [`appsettings.example.json`](../V-Eval-Gateway.API/appsettings.example.json))**:
