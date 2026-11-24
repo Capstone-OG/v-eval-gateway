@@ -166,3 +166,6 @@
 - **Tái Cấu Trúc Kiến Trúc Solution**:
   - Gỡ bỏ hoàn toàn 3 dự án Clean Architecture rỗng (`Domain`, `Application`, `Infrastructure`).
   - Chuyển `V-Eval-Gateway.API` sang mô hình **Feature Folders / Modular Architecture**.
+
+## [24/11/2026]
+- Bổ sung route YARP `/api/v1/roadmaps/{**catch-all}` trỏ sang `practice-service-cluster` trong `V-Eval-Gateway.API/appsettings.json`.
